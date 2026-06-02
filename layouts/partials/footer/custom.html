@@ -1,0 +1,143 @@
+{{- $bgImg := resources.Get "background/新背景.png" -}}
+{{- $particlesConfig := resources.Get "background/particlesjs-config.json" -}}
+{{- if $bgImg -}}
+<style>
+  body {
+    background: url({{ $bgImg.Permalink }}) no-repeat center 17%;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+</style>
+{{- end -}}
+
+<div id="particles-js"></div>
+
+<style>
+  #particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+{{- if $particlesConfig -}}
+<script>
+  particlesJS.load('particles-js', {{ $particlesConfig.Permalink }}, function() {
+    console.log('particles.js loaded');
+  });
+</script>
+{{- end -}}
+
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+<meting-js
+    server="netease"
+    type="song"
+    id="1856342825,3387456784,1497597539,3343971833,2750754678"
+    fixed="true"
+    autoplay="false"
+    loop="all"
+    order="list"
+    preload="auto"
+    list-folded="false"
+    list-max-height="400px">
+</meting-js>
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script>
+<script>
+var pjax = new Pjax({
+    selectors: [
+        ".main-container",
+        ".js-Pjax"
+    ]
+});
+
+pjax._handleResponse = pjax.handleResponse;
+pjax.handleResponse = function(responseText, request, href, options) {
+    if (request.responseText.match("<html")) {
+        if (responseText) {
+            var newDom = new DOMParser().parseFromString(responseText, 'text/html');
+            var bodyClass = newDom.body.className;
+            document.body.setAttribute("class", bodyClass);
+        }
+        pjax._handleResponse(responseText, request, href, options);
+    }
+};
+
+function getAPlayer() {
+    var meting = document.querySelector('meting-js');
+    return meting && meting.aplayer ? meting.aplayer : null;
+}
+
+window.onbeforeunload = function() {
+    var ap = getAPlayer();
+    if (ap && ap.audio && ap.list) {
+        var playInfo = {
+            index: ap.list.index,
+            currentTime: ap.audio.currentTime,
+            paused: ap.paused
+        };
+        localStorage.setItem("playInfo", JSON.stringify(playInfo));
+    }
+};
+
+window.onload = function() {
+    var counter = 0;
+    var checkInterval = setInterval(function() {
+        counter++;
+        var ap = getAPlayer();
+        if (ap && ap.list && ap.list.audios && ap.list.audios.length > 0) {
+            clearInterval(checkInterval);
+            var playInfoStr = localStorage.getItem("playInfo");
+            if (!playInfoStr) return;
+            var playInfo = JSON.parse(playInfoStr);
+            if (!playInfo) return;
+            try {
+                ap.list.switch(playInfo.index);
+                setTimeout(function() {
+                    ap.seek(playInfo.currentTime);
+                    if (!playInfo.paused) {
+                        ap.play();
+                    }
+                }, 500);
+            } catch(e) {}
+        }
+        if (counter > 50) clearInterval(checkInterval);
+    }, 200);
+};
+
+document.addEventListener('pjax:complete', function() {
+    if (window.Stack && window.Stack.init) {
+        window.Stack.init();
+    }
+    if (window.switchLanguage) {
+        var lang = localStorage.getItem('preferred-language') || 'zh-cn';
+        window.switchLanguage(lang);
+    }
+});
+
+function showHideView() {
+    var viewCounts = document.querySelectorAll("#viewCount");
+    if (viewCounts.length > 0) {
+        var article = document.querySelector(".article-page");
+        if (!article) {
+            viewCounts.forEach(function(ele) {
+                ele.style.display = 'none';
+            });
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    showHideView();
+});
+
+document.addEventListener('pjax:complete', function() {
+    showHideView();
+});
+</script>

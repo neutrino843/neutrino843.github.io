@@ -1,0 +1,26 @@
+[zh-cn]
+languageName = "中文"
+weight = 1
+title = "neutrino的博客"
+
+[zh-cn.params]
+readingTime = true
+
+[zh-cn.params.dateFormat]
+  published = "2006-01-02"
+  lastUpdated = "2006-01-02 15:04 MST"
+
+[zh-cn.params.sidebar]
+subtitle = "叹息的云承载不住自我，所以溃散于云野。这里neutrino，分享一点自己的项目和学习笔记内容"
+
+[zh-cn.params.author]
+name = "neutrino"
+
+[en]
+languageName = "English"
+weight = 2
+title = "neutrino's Blog"
+
+[en.params.dateFormat]
+  published = "Jan 02, 2006"
+  lastUpdated = "Jan 02, 2006 15:04 MST"

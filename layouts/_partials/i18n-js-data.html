@@ -1,0 +1,9 @@
+{{- $data := .Site.Data.i18n_js -}}
+{{- if $data -}}
+<script>
+window.__I18N__ = {{ $data | jsonify | safeJS }};
+window.__CURRENT_LANG__ = "{{ .Site.Language.Lang }}";
+window.__SUPPORTED_LANGS__ = ["zh-cn", "en"];
+window.__DEFAULT_LANG__ = "zh-cn";
+</script>
+{{- end -}}

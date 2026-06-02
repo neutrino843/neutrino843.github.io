@@ -1,0 +1,22 @@
+baseURL = "http://example.com/"
+languageCode = "zh-cn"
+defaultContentLanguage = "zh-cn"
+hasCJKLanguage = true
+title = "neutrino的博客"
+theme = "hugo-theme-stack"
+
+
+# [[module.imports]]
+#   path = "github.com/CaiJimmy/hugo-theme-stack/v3"
+
+[pagination]
+pagerSize = 5
+
+[permalink]
+post = "/p/:slug/"
+page = "/:slug/"
+
+defaultContentLanguageInSubdir = false
+
+[services.disqus]
+shortname = "hugo-theme-stack"

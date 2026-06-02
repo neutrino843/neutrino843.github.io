@@ -1,0 +1,19 @@
+{{- $ThemeVersion := "4.0.0" -}}
+<footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        {{ if and (.Site.Params.footer.since) (ne .Site.Params.footer.since (int (now.Format "2006"))) }}
+            {{ .Site.Params.footer.since }} - 
+        {{ end }}
+        {{ now.Format "2006" }} {{ default .Site.Title .Site.Copyright }}
+    </section>
+    
+    <section class="powerby">
+        {{ with .Site.Params.footer.customText }}
+            {{ . | safeHTML }} <br/>
+        {{ end }}
+
+        <span data-i18n-key="footer.builtWith">{{ T "footer.builtWith" (dict "Generator" `<a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>`) | safeHTML }}</span> <br />
+        <span data-i18n-key="footer.designedBy">{{ T "footer.designedBy" (dict "Theme" `<b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.0">Stack</a></b>` "DesignedBy" `<a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>`) | safeHTML }}</span>
+    </section>
+</footer>

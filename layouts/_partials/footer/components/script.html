@@ -1,0 +1,9 @@
+{{- $opts := dict "minify" hugo.IsProduction "JSXFactory" "createElement" "JSXFragmentFactory" "Fragment" -}}
+{{- $script := resources.Get "ts/main.ts" | js.Build $opts | fingerprint -}}
+
+<script type="text/javascript" src="{{ $script.RelPermalink }}" defer></script>
+
+{{- with resources.Get "ts/custom.ts" -}}
+    {{- $customScript := . | js.Build $opts | fingerprint -}}
+    <script type="text/javascript" src="{{ $customScript.RelPermalink }}" defer></script>
+{{- end -}}

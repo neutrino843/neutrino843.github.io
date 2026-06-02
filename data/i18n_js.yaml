@@ -1,0 +1,117 @@
+zh-cn:
+  toggleMenu: "切换菜单"
+  darkMode: "暗色模式"
+  widget:
+    archives:
+      title: "归档"
+      more: "更多"
+    tagCloud:
+      title: "标签云"
+    categoriesCloud:
+      title: "分类"
+  search:
+    title: "搜索"
+    placeholder: "输入关键词..."
+    resultTitle: "#PAGES_COUNT 个结果（用时 #TIME_SECONDS 秒）"
+  article:
+    back: "返回"
+    tableOfContents: "目录"
+    relatedContent: "相关文章"
+    lastUpdatedOn: "最后更新于"
+    readingTime: "{{ .Count }} 分钟阅读"
+    tags: "标签"
+    alert:
+      note: "备注"
+      tip: "提示"
+      important: "重要"
+      warning: "警告"
+      caution: "注意"
+  notFound:
+    title: "404 错误"
+    subtitle: "页面不存在"
+  footer:
+    builtWith: "使用 Hugo 构建"
+    designedBy: "主题 Stack 由 Jimmy 设计"
+  cookies:
+    title: "Cookie 同意"
+    text: "我们使用 Cookie 来增强您的浏览体验并分析网站流量。"
+    acceptAll: "接受所有"
+    deny: "拒绝"
+    managePreferences: "管理偏好设置"
+    settingsTitle: "Cookie 偏好设置"
+    savePreferences: "保存偏好设置"
+    cancel: "取消"
+    footerLink: "Cookie 设置"
+    commentsDisabled: "评论已禁用，直到您接受功能性 Cookie。"
+    necessary:
+      title: "必要"
+      text: "这些 Cookie 是网站运行所必需的，无法禁用。"
+    analytics:
+      title: "分析"
+      text: "这些 Cookie 帮助我们了解访问者如何与我们的网站互动。"
+    functional:
+      title: "功能性"
+      text: "这些 Cookie 启用评论和嵌入内容等功能。"
+  pagination:
+    previous: "上一页"
+    next: "下一页"
+    page: "页"
+
+en:
+  toggleMenu: "Toggle Menu"
+  darkMode: "Dark Mode"
+  widget:
+    archives:
+      title: "Archives"
+      more: "More"
+    tagCloud:
+      title: "Tags"
+    categoriesCloud:
+      title: "Categories"
+  search:
+    title: "Search"
+    placeholder: "Type something..."
+    resultTitle: "#PAGES_COUNT pages (#TIME_SECONDS seconds)"
+  article:
+    back: "Back"
+    tableOfContents: "Table of contents"
+    relatedContent: "Related content"
+    lastUpdatedOn: "Last updated on"
+    readingTime: "{{ .Count }} minute read"
+    tags: "Tags"
+    alert:
+      note: "Note"
+      tip: "Tip"
+      important: "Important"
+      warning: "Warning"
+      caution: "Caution"
+  notFound:
+    title: "Not Found"
+    subtitle: "This page does not exist"
+  footer:
+    builtWith: "Built with Hugo"
+    designedBy: "Theme Stack designed by Jimmy"
+  cookies:
+    title: "Cookie Consent"
+    text: "We use cookies to enhance your browsing experience and analyze site traffic."
+    acceptAll: "Accept All"
+    deny: "Deny"
+    managePreferences: "Manage preferences"
+    settingsTitle: "Cookie Preferences"
+    savePreferences: "Save preferences"
+    cancel: "Cancel"
+    footerLink: "Cookie settings"
+    commentsDisabled: "Comments are disabled until you accept functional cookies."
+    necessary:
+      title: "Necessary"
+      text: "These cookies are required for the website to function and cannot be disabled."
+    analytics:
+      title: "Analytics"
+      text: "These cookies help us understand how visitors interact with our website."
+    functional:
+      title: "Functional"
+      text: "These cookies enable features like comments and embedded content."
+  pagination:
+    previous: "Previous"
+    next: "Next"
+    page: "Page"

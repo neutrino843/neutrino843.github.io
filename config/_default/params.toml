@@ -1,0 +1,39 @@
+mainSections   = ["post"]
+rssFullContent = true
+favicon        = "img/avatar.jpg"
+
+[footer]
+    since = 2026
+
+[sidebar]
+    emoji    = "☁️"
+    subtitle = "叹息的云承载不住自我，所以溃散于云野。这里neutrino，分享一点自己的项目和学习笔记内容"
+    avatar   = "img/avatar.jpg"
+
+[article]
+    [article.license]
+        enabled = true
+        default = "Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)"
+
+[widgets]
+    homepage = [
+        { type = "search" },
+        { type = "archives", params = { limit = 5 } },
+        { type = "categories", params = { limit = 10 } },
+        { type = "tag-cloud", params = { limit = 10 } },
+    ]
+    page     = [{ type = "toc" }]
+
+[comments]
+    # See complete configuration in config/_default/params.toml
+    enabled  = true
+    provider = "disqus"
+
+# GDPR Cookie Consent Configuration
+# When enabled, analytics and functional cookies require user consent
+[cookies]
+    enabled = false
+
+    [cookies.categories]
+        analytics  = true
+        functional = true
