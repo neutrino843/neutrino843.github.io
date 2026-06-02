@@ -1,12 +1,10 @@
-# Hugo build output
+# Hugo
 public/
 resources/
-
-# Hugo lock file
 .hugo_build.lock
 
-# Hugo executable
-hugo.exe
+# Dependencies
+node_modules/
 
 # OS files
 .DS_Store
@@ -16,9 +14,10 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Environment
+# Env
 .env
 .env.local
 
-# Node modules (if any)
-node_modules/
+# Binaries
+hugo.exe
+*.exe
