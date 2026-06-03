@@ -128,10 +128,14 @@ class Search {
         const rawData = await this.getData();
         const results: pageData[] = [];
 
-        const regex = new RegExp(keywords.filter((v, index, arr) => {
-            arr[index] = escapeRegExp(v);
-            return v.trim() !== '';
-        }).join('|'), 'gi');
+        // Build escaped, non-empty keyword list (no mutation of original array)
+        const escaped = keywords
+            .map(v => escapeRegExp(v.trim()))
+            .filter(v => v.length > 0);
+
+        if (escaped.length === 0) return [];
+
+        const regex = new RegExp(escaped.join('|'), 'gi');
 
         for (const item of rawData) {
             const titleMatches: match[] = [],
@@ -180,6 +184,7 @@ class Search {
         const startTime = performance.now();
 
         const results = await this.searchKeywords(keywords);
+        if (!this.list.isConnected) return;
         this.clear();
 
         for (const item of results) {
