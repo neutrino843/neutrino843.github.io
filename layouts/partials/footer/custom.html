@@ -32,7 +32,29 @@
 </script>
 {{- end -}}
 
-<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+<script>
+(function() {
+  var loaded = false;
+  function loadMeting() {
+    if (loaded) return;
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js';
+    s.onerror = function() {
+      console.warn('jsdelivr CDN failed, trying unpkg...');
+      var s2 = document.createElement('script');
+      s2.src = 'https://unpkg.com/meting@2/dist/Meting.min.js';
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s);
+    loaded = true;
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadMeting);
+  } else {
+    loadMeting();
+  }
+})();
+</script>
 <meting-js
     server="netease"
     type="song"
@@ -122,7 +144,7 @@ document.addEventListener('pjax:complete', function() {
 });
 
 function showHideView() {
-    var viewCounts = document.querySelectorAll("#viewCount");
+    var viewCounts = document.querySelectorAll(".viewCount");
     if (viewCounts.length > 0) {
         var article = document.querySelector(".article-page");
         if (!article) {
@@ -133,11 +155,13 @@ function showHideView() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function initVercount() {
     showHideView();
-});
+    if (window.Vercount) {
+        window.Vercount.init();
+    }
+}
 
-document.addEventListener('pjax:complete', function() {
-    showHideView();
-});
+document.addEventListener('DOMContentLoaded', initVercount);
+document.addEventListener('pjax:complete', initVercount);
 </script>

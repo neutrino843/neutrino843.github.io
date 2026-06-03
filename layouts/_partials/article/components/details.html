@@ -52,12 +52,12 @@
                     </time>
                 {{ end }}
 
-                <div id="viewCount">
+                <span class="viewCount" style="{{ if not (eq $Page.Kind "page") }}display:none{{ end }}">
                     {{ partial "helper/icon" "eye" }}
                     <time class="article-time--reading">
-                        <span id="vercount_value_page_pv">---</span> 次阅读
+                        <span class="vercount-page-pv">---</span> 次阅读
                     </time>
-                </div>
+                </span>
             </div>
         {{ end }}
 
