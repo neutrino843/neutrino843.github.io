@@ -12,9 +12,8 @@ import { setupScrollspy } from './scrollspy';
 import { setupSmoothAnchors } from './smoothAnchors';
 import { searchInit } from './search';
 
-declare var pjax: any;
-
 let Stack = {
+    _initialized: false,
     init: () => {
         menu();
 
@@ -24,7 +23,8 @@ let Stack = {
             setupScrollspy();
         }
 
-        const highlights = document.querySelectorAll('.article-content div.highlight');
+        // Only add copy buttons if not already present (PJAX re-init)
+        const highlights = document.querySelectorAll('.article-content div.highlight:not(:has(.copyCodeButton))');
         const copyText = 'Copy',
             copiedText = 'Copied!';
 
@@ -41,7 +41,6 @@ let Stack = {
                 navigator.clipboard.writeText(codeBlock.textContent)
                     .then(() => {
                         copyButton.textContent = copiedText;
-
                         setTimeout(() => {
                             copyButton.textContent = copyText;
                         }, 1000);
@@ -53,9 +52,15 @@ let Stack = {
             });
         });
 
-        new StackColorScheme(document.getElementById('dark-mode-toggle')!);
+        // Guard against missing dark-mode-toggle (e.g., disabled in config)
+        const darkToggle = document.getElementById('dark-mode-toggle');
+        if (darkToggle && !Stack._initialized) {
+            new StackColorScheme(darkToggle);
+        }
 
         searchInit();
+
+        Stack._initialized = true;
     }
 }
 
