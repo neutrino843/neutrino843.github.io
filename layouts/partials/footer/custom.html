@@ -32,29 +32,7 @@
 </script>
 {{- end -}}
 
-<script>
-(function() {
-  var loaded = false;
-  function loadMeting() {
-    if (loaded) return;
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js';
-    s.onerror = function() {
-      console.warn('jsdelivr CDN failed, trying unpkg...');
-      var s2 = document.createElement('script');
-      s2.src = 'https://unpkg.com/meting@2/dist/Meting.min.js';
-      document.head.appendChild(s2);
-    };
-    document.head.appendChild(s);
-    loaded = true;
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadMeting);
-  } else {
-    loadMeting();
-  }
-})();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js" onerror="console.error('MetingJS CDN failed');var s=document.createElement('script');s.src='https://unpkg.com/meting@2/dist/Meting.min.js';s.onload=function(){console.log('MetingJS loaded from unpkg fallback')};document.head.appendChild(s)"></script>
 <meting-js
     server="netease"
     type="song"
@@ -133,35 +111,44 @@ window.onload = function() {
     }, 200);
 };
 
-document.addEventListener('pjax:complete', function() {
-    if (window.Stack && window.Stack.init) {
-        window.Stack.init();
-    }
-    if (window.switchLanguage) {
-        var lang = localStorage.getItem('preferred-language') || 'zh-cn';
-        window.switchLanguage(lang);
-    }
-});
+function refreshVercount() {
+    var url = encodeURIComponent(window.location.href);
+    fetch('https://cn.vercount.one/api?url=' + url)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var pagePv = document.getElementById('vercount_value_page_pv');
+            if (pagePv && data.page_pv) pagePv.textContent = data.page_pv;
+            var sitePv = document.getElementById('vercount_value_site_pv');
+            if (sitePv && data.site_pv) sitePv.textContent = data.site_pv;
+            var siteUv = document.getElementById('vercount_value_site_uv');
+            if (siteUv && data.site_uv) siteUv.textContent = data.site_uv;
+        }).catch(function(e) { console.log('vercount refresh:', e); });
+}
 
 function showHideView() {
     var viewCounts = document.querySelectorAll(".viewCount");
     if (viewCounts.length > 0) {
         var article = document.querySelector(".article-page");
         if (!article) {
-            viewCounts.forEach(function(ele) {
-                ele.style.display = 'none';
-            });
+            viewCounts.forEach(function(ele) { ele.style.display = 'none'; });
         }
     }
 }
 
-function initVercount() {
+document.addEventListener('DOMContentLoaded', function() {
     showHideView();
-    if (window.Vercount) {
-        window.Vercount.init();
-    }
-}
+    refreshVercount();
+    setTimeout(refreshVercount, 2000);
+});
 
-document.addEventListener('DOMContentLoaded', initVercount);
-document.addEventListener('pjax:complete', initVercount);
+document.addEventListener('pjax:complete', function() {
+    if (window.Stack && window.Stack.init) window.Stack.init();
+    if (window.switchLanguage) {
+        var lang = localStorage.getItem('preferred-language') || 'zh-cn';
+        window.switchLanguage(lang);
+    }
+    showHideView();
+    setTimeout(refreshVercount, 100);
+    setTimeout(refreshVercount, 2000);
+});
 </script>

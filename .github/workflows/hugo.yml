@@ -1,4 +1,4 @@
-name: Deploy Hugo site to Pages
+name: Build Hugo & Deploy to Pages
 
 on:
   push:
@@ -7,18 +7,11 @@ on:
       - 'docs/**'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,19 +23,11 @@ jobs:
           extended: true
 
       - name: Build
-        run: hugo --configDir config --themesDir themes --minify --baseURL "https://neutrino843.github.io/" --destination ./public
+        run: hugo --configDir config --themesDir themes --minify --baseURL "https://neutrino843.github.io/" --destination docs
 
-      - uses: actions/configure-pages@v4
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./public
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@v4
+      - name: Deploy
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/ -f
+          git diff --cached --quiet || (git commit -m "auto-build: deploy [skip ci]" && git push)
