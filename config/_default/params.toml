@@ -25,9 +25,23 @@ favicon        = "img/avatar.jpg"
     page     = [{ type = "toc" }]
 
 [comments]
-    # See complete configuration in config/_default/params.toml
     enabled  = true
-    provider = "disqus"
+    provider = "giscus"
+
+    [comments.giscus]
+        repo             = "neutrino843/neutrino843.github.io"
+        repoID           = "R_kgDOSPdDpA"
+        category         = "General"
+        categoryID       = ""
+        mapping          = "pathname"
+        lightTheme       = "light"
+        darkTheme        = "dark_dimmed"
+        reactionsEnabled = 1
+        emitMetadata     = 0
+        inputPosition    = "top"
+        lang             = "zh-CN"
+        strict           = 0
+        loading          = "lazy"
 
 # GDPR Cookie Consent Configuration
 # When enabled, analytics and functional cookies require user consent
