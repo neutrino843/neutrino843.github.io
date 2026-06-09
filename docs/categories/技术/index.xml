@@ -1,4 +1,322 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>技术 on neutrino的博客</title><link>https://neutrino843.github.io/categories/%E6%8A%80%E6%9C%AF/</link><description>Recent content in 技术 on neutrino的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 02 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/categories/%E6%8A%80%E6%9C%AF/index.xml" rel="self" type="application/rss+xml"/><item><title>构建生产级AI Agent：从原型到落地的完整实践指南</title><link>https://neutrino843.github.io/post/building-ai-agent-guide/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/building-ai-agent-guide/</guid><description>&lt;h2 id="引言"&gt;引言
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>技术 on neutrino的博客</title><link>https://neutrino843.github.io/categories/%E6%8A%80%E6%9C%AF/</link><description>Recent content in 技术 on neutrino的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 09 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/categories/%E6%8A%80%E6%9C%AF/index.xml" rel="self" type="application/rss+xml"/><item><title>给Hugo Stack主题配置Giscus评论区</title><link>https://neutrino843.github.io/post/hugo-stack-giscus-comment/</link><pubDate>Tue, 09 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/hugo-stack-giscus-comment/</guid><description>&lt;h2 id="前言"&gt;前言
+&lt;/h2&gt;&lt;p&gt;之前博客没有评论区，看其他大佬的博客都有评论区，就想自己也配置一个，最开始想到是利用ai帮忙写一个评论区，后面发现工作量有点大调试太麻烦了，于是就一直搁置了，然后后面搜索相关的内容的时候看到了 Giscus 这个项目，发现很适合hugo 这个stack主题进行一个评论区的搭建，一句话概括就是：&lt;strong&gt;用 GitHub Discussions 当数据库的评论区&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;而且上手很简单，加上不需要额外买服务器，不需要管数据库，访客用 GitHub 账号就能登录评论，所有数据都存在你自己仓库的 Discussions 里，完全可控。对咱们这种博客托管在 GitHub Pages 的开发者来说，简直就是天选方案。&lt;/p&gt;
+&lt;h2 id="这篇文章会从零开始完整记录我配置的全过程包括中间踩的坑希望能帮你少走点弯路"&gt;这篇文章会从零开始，完整记录我配置的全过程，包括中间踩的坑，希望能帮你少走点弯路。
+&lt;/h2&gt;&lt;h2 id="前置准备"&gt;前置准备
+&lt;/h2&gt;&lt;p&gt;在动手改代码之前，先把这几件事搞定：&lt;/p&gt;
+&lt;h3 id="1-一个-github-仓库"&gt;1. 一个 GitHub 仓库
+&lt;/h3&gt;&lt;p&gt;这个不需要多说，如果你是像我一样使用hugo+stack主题，利用github pages托管博客的话。那么你的 Hugo 博客源码肯定已经在 GitHub 上了。我的是 &lt;code&gt;neutrino843/neutrino843.github.io&lt;/code&gt;，后面配置的时候会用到。&lt;/p&gt;
+&lt;h3 id="2-开启-github-discussions"&gt;2. 开启 GitHub Discussions
+&lt;/h3&gt;&lt;p&gt;这是最简单的一步，一定要去确认一下仓库的 Discussions 功能是否开启了。&lt;/p&gt;
+&lt;p&gt;首先去你仓库的 Settings 页面（https://github.com/你的用户名/仓库名/settings），往下翻到 &lt;strong&gt;Features&lt;/strong&gt; 区域：
+&lt;strong&gt;勾选 Discussions&lt;/strong&gt;
+&lt;img alt="alt text" class="gallery-image" data-flex-basis="273px" data-flex-grow="113" height="1076" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image.png" srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_603bac65b6753c52.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image.png 1224w" width="1224"&gt;
+搞定之后，你仓库顶部的标签栏会多出一个 &lt;strong&gt;Discussions&lt;/strong&gt; 的 Tab，说明成功了。&lt;/p&gt;
+&lt;h3 id="3-安装-giscus-github-app"&gt;3. 安装 Giscus GitHub App
+&lt;/h3&gt;&lt;p&gt;打开 &lt;a class="link" href="https://github.com/apps/giscus" target="_blank" rel="noopener"
+ &gt;https://github.com/apps/giscus&lt;/a&gt;，点击 &lt;strong&gt;Install&lt;/strong&gt;，选择你的仓库，授权。这一步是为了让访客能用 GitHub 账号登录发表评论。&lt;/p&gt;
+&lt;h3 id="4-打开-giscus-官网生成配置"&gt;4. 打开 Giscus 官网生成配置
+&lt;/h3&gt;&lt;p&gt;访问 &lt;a class="link" href="https://giscus.app" target="_blank" rel="noopener"
+ &gt;https://giscus.app&lt;/a&gt;，你会看到一个配置页面，按顺序填：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;字段&lt;/th&gt;
+ &lt;th&gt;填写内容&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Language&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;选 &lt;strong&gt;简体中文&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Repository&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;输入 &lt;code&gt;你的用户名/仓库名&lt;/code&gt;，比如 我的就是&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;https://github.com/neutrino843/neutrino843.github.io&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;填完仓库名之后，Giscus 会自动验证。如果 Discussions 没开启，它会提示你&amp;quot;该仓库尚未启用 Discussions&amp;quot;——那你就回到第 2 步去勾上，然后刷新页面。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;(这里有一个注意点，要记得满足上述的三个要求，先确认自己的仓库是否是公开的，然后是否安装了giscus app，如果没有的话点击网页上的链接然后安装，接着
+&lt;img alt="alt text" class="gallery-image" data-flex-basis="264px" data-flex-grow="110" height="1151" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1.png" srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_bead6811e08cbb0f.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1.png 1269w" width="1269"&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;一定要确认这一步是否选择了，不然容易出现错误，如下：
+&lt;img alt="alt text" class="gallery-image" data-flex-basis="399px" data-flex-grow="166" height="384" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-2.png" width="639"&gt;&lt;/p&gt;
+&lt;p&gt;最后确认是否开启了 Discussions 功能。)&lt;/p&gt;
+&lt;p&gt;验证通过后，继续往下看：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;字段&lt;/th&gt;
+ &lt;th&gt;填写内容&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Discussion（分类）&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;选 &lt;strong&gt;General&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Mapping&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;选 &lt;strong&gt;Discussion title contains page pathname&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Theme&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;看你喜好，我选的 &lt;strong&gt;Preferred color scheme&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这里有个坑：因为我是参考ai给出的指导，他当时说是Discussion，我找半天没找到Discussion，当时在这愣了半天，以为是页面没加载出来……后面发现就是选中文显示的Discussion QAQ&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;选完 Discussion 之后，页面的“启用giscus”这个标签下面，会自动生成一段 &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; 代码，大概长这样：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;neutrino/neutrino&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;[在此输入仓库 ID]&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;[在此输入分类名]&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;[在此输入分类 ID]&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-mapping&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-strict&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-reactions-enabled&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-emit-metadata&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-input-position&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;bottom&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;preferred_color_scheme&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;zh-CN&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;把这段代码里的 &lt;code&gt;data-repo-id&lt;/code&gt; 和 &lt;code&gt;data-category-id&lt;/code&gt; 记下来，后面要用，如果没有的话检查一下是不是前面哪一步漏了。&lt;strong&gt;这两个值每个仓库都不一样&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="hugo-stack-主题配置"&gt;Hugo Stack 主题配置
+&lt;/h2&gt;&lt;p&gt;好消息是：Hugo Stack 主题&lt;strong&gt;原生就支持 Giscus&lt;/strong&gt;，不需要自己写模板代码，只需要改配置文件就行。所以只需要在配置文件里改一下，就可以使用 Giscus 评论系统。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：Stack 主题默认是 Disqus Disqus 评论系统，所以要切换到 Giscus，需要在配置文件里修改一下。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="修改站点配置文件"&gt;修改站点配置文件
+&lt;/h3&gt;&lt;p&gt;找到 &lt;code&gt;config/_default/params.toml&lt;/code&gt;（如果你用的是 YAML 格式，就是 &lt;code&gt;params.yaml&lt;/code&gt;），把评论系统从 Disqus 切到 Giscus。&lt;/p&gt;
+&lt;p&gt;原来应该是这样的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;comments&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;enabled&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;provider&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;disqus&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;改成：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;comments&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;enabled&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;provider&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;giscus&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;comments&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;giscus&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;repo&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;neutrino843/neutrino843.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;repoID&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;R_kgDOSPdDpA&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;category&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;General&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;categoryID&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DIC_kwDOSPdDpM4C-zBr&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;mapping&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;lightTheme&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;light&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;darkTheme&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;dark_dimmed&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;reactionsEnabled&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;emitMetadata&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;inputPosition&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;top&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;lang&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;zh-CN&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;strict&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;loading&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;lazy&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;逐个说一下这些参数是干嘛的：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;参数&lt;/th&gt;
+ &lt;th&gt;说明&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;repo&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;你的仓库名，格式 &lt;code&gt;用户名/仓库名&lt;/code&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;repoID&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;仓库的 GitHub Node ID，从 giscus.app 生成的代码里抄&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;category&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Discussions 分类名，这里用的 &lt;code&gt;General&lt;/code&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;categoryID&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;分类的 Node ID，也从 giscus.app 抄&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;mapping&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;文章和 Discussion 的关联方式，&lt;code&gt;pathname&lt;/code&gt; 表示按 URL 路径匹配&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;lightTheme&lt;/code&gt; / &lt;code&gt;darkTheme&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;浅色/深色主题，Stack 会自动根据当前配色切换&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;lang&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;Giscus 界面语言，&lt;code&gt;zh-CN&lt;/code&gt; 就是简体中文&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;inputPosition&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;评论输入框位置，&lt;code&gt;top&lt;/code&gt; 在顶部，&lt;code&gt;bottom&lt;/code&gt; 在底部&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：&lt;code&gt;repoID&lt;/code&gt; 和 &lt;code&gt;categoryID&lt;/code&gt; 是 GitHub 内部的 Node ID，一串类似 &lt;code&gt;R_kgXXXXX&lt;/code&gt; 和 &lt;code&gt;DIC_kgXXXXX&lt;/code&gt; 的编码，&lt;strong&gt;不要随便编一个填进去&lt;/strong&gt;，一定要从 giscus.app 生成的代码里拿。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="模板文件需要改吗"&gt;模板文件需要改吗？
+&lt;/h3&gt;&lt;p&gt;不需要。Stack 主题已经内置了评论区加载逻辑，路径在 &lt;code&gt;layouts/_partials/comments/include.html&lt;/code&gt;，它会根据 &lt;code&gt;provider&lt;/code&gt; 的值自动加载对应的 &lt;code&gt;comments/provider/giscus.html&lt;/code&gt; 模板。&lt;/p&gt;
+&lt;p&gt;不过如果你想确认一下，可以看看主题里有没有这个文件：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;themes/hugo-theme-stack/layouts/_partials/comments/provider/giscus.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果存在，那说明主题支持，你就不用管了。&lt;/p&gt;
+&lt;h3 id="单个文章关闭评论"&gt;单个文章关闭评论
+&lt;/h3&gt;&lt;p&gt;如果你不想让某篇文章显示评论区，在文章 Front Matter 里加一行就行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;某篇文章&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;comments&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样那篇文章底部就不会加载评论框了。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="验证和调试"&gt;验证和调试
+&lt;/h2&gt;&lt;h3 id="本地构建测试"&gt;本地构建测试
+&lt;/h3&gt;&lt;p&gt;在终端执行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;打开一篇博客文章，拉到最底部，你应该能看到 Giscus 的评论框：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;未登录状态会显示 &lt;strong&gt;&amp;ldquo;Sign in with GitHub&amp;rdquo;&lt;/strong&gt; 按钮&lt;/li&gt;
+&lt;li&gt;点击后会跳转到 GitHub 授权页面&lt;/li&gt;
+&lt;li&gt;授权完成后回到文章页面，就可以发表评论了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="常见问题排查"&gt;常见问题排查
+&lt;/h3&gt;&lt;h4 id="q评论区完全不显示"&gt;Q：评论区完全不显示
+&lt;/h4&gt;&lt;p&gt;检查这几个地方：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;enabled = true&lt;/code&gt; 有没有写对？&lt;/strong&gt; 别把 &lt;code&gt;true&lt;/code&gt; 写成 &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;provider = &amp;quot;giscus&amp;quot;&lt;/code&gt; 有没有拼错？&lt;/strong&gt; 注意拼写，不是 &lt;code&gt;giscuss&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;repoID&lt;/code&gt; 和 &lt;code&gt;categoryID&lt;/code&gt; 是否为空？&lt;/strong&gt; 如果没填或者填错了，Giscus 不会加载&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;页面 Console 报错？&lt;/strong&gt; 按 F12 打开开发者工具，看 Console 有没有红字报错&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="q评论区显示但无法登录"&gt;Q：评论区显示但无法登录
+&lt;/h4&gt;&lt;p&gt;检查 GitHub App 有没有安装。打开 &lt;a class="link" href="https://github.com/settings/installations" target="_blank" rel="noopener"
+ &gt;https://github.com/settings/installations&lt;/a&gt; 看看 giscus app 是否已授权给你的仓库。&lt;/p&gt;
+&lt;h4 id="q样式对不上--评论区太丑"&gt;Q：样式对不上 / 评论区太丑
+&lt;/h4&gt;&lt;p&gt;Giscus 会根据 &lt;code&gt;lightTheme&lt;/code&gt; 和 &lt;code&gt;darkTheme&lt;/code&gt; 自动切换样式。Stack 主题内置了明暗切换监听，能自动同步。你可以在 &lt;code&gt;params.toml&lt;/code&gt; 里换其他主题试试：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;lightTheme&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;light&amp;#34;&lt;/span&gt; &lt;span class="c"&gt;# 浅色&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;darkTheme&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;dark_dimmed&amp;#34;&lt;/span&gt; &lt;span class="c"&gt;# 深色&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Giscus 支持的主题名称可以翻它的文档：https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md&lt;/p&gt;
+&lt;h4 id="qdisqus-的历史评论怎么办"&gt;Q：Disqus 的历史评论怎么办？
+&lt;/h4&gt;&lt;p&gt;如果你之前用 Disqus，迁移后旧的评论就看不到了。Giscus 和 Disqus 的数据不互通。&lt;/p&gt;
+&lt;p&gt;一个折中方案：&lt;strong&gt;把 Disqus 的评论导出成静态文件&lt;/strong&gt;，手动贴在每篇文章底部。Disqus 后台有导出功能，只是操作起来有点麻烦，适合评论不多的情况。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="最后"&gt;最后
+&lt;/h2&gt;&lt;p&gt;整体来说，配置 Giscus 不算复杂，核心就是三步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在仓库设置里开启 Discussions&lt;/li&gt;
+&lt;li&gt;去 &lt;a class="link" href="https://giscus.app" target="_blank" rel="noopener"
+ &gt;https://giscus.app&lt;/a&gt; 生成配置代码，拿到 &lt;code&gt;repoID&lt;/code&gt; 和 &lt;code&gt;categoryID&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;在 Hugo 的 &lt;code&gt;params.toml&lt;/code&gt; 里填好配置&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如果顺畅的话，整个过程前后花不了十分钟，效果却提升不少——没有广告、加载飞快、数据完全归自己管。如果你也在用 Hugo Stack 主题，非常推荐使用喵。&lt;/p&gt;
+&lt;p&gt;有啥配置过程中遇到的问题，欢迎在评论区留言（没错就是底下这个评论区），一起交流。
+希望这篇文章能给你提供一点点帮助，关注猫猫谢谢喵。&lt;/p&gt;</description></item><item><title>构建生产级AI Agent：从原型到落地的完整实践指南</title><link>https://neutrino843.github.io/post/building-ai-agent-guide/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/building-ai-agent-guide/</guid><description>&lt;h2 id="引言"&gt;引言
 &lt;/h2&gt;&lt;p&gt;AI Agent（智能体）正在从实验性玩具走向生产环境。但构建一个真正可靠、安全、可维护的Agent系统，远比调用一次LLM API复杂得多。本文将基于阅读学习OpenAI: A practical guide to building agents内容的感悟，系统性地梳理从原型验证到生产部署全链路中的关键实践与常见陷阱。&lt;/p&gt;
 &lt;p&gt;一个Agent由三个核心部分组成：&lt;strong&gt;模型（Model）&lt;/strong&gt;、&lt;strong&gt;工具（Tools）&lt;/strong&gt;、&lt;strong&gt;指令（Instructions）&lt;/strong&gt;。三者协同工作，缺一不可。&lt;/p&gt;
 &lt;hr&gt;
