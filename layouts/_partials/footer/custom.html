@@ -1,0 +1,103 @@
+{{- $bgImg := resources.Get "background/新背景.png" -}}
+{{- $particlesConfig := resources.Get "background/particlesjs-config.json" -}}
+{{- if $bgImg -}}
+<style>
+  body {
+    background: url({{ $bgImg.Permalink }}) no-repeat center 17%;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+</style>
+{{- end -}}
+
+<div id="particles-js"></div>
+
+<style>
+  #particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+{{- if $particlesConfig -}}
+<script>
+  particlesJS.load('particles-js', {{ $particlesConfig.Permalink }}, function() {
+    console.log('particles.js loaded');
+  });
+</script>
+{{- end -}}
+
+<script defer src="https://cn.vercount.one/js"></script>
+
+{{/* Custom Music Player - playlist configuration */}}
+<script>
+window.__PLAYER_PLAYLIST__ = [
+    {
+        name: '山外小楼夜听雨',
+        artist: '任然',
+        url: 'https://music.163.com/song/media/outer/url?id=1856342825.mp3',
+        cover: 'https://p2.music.126.net/rxHP5vwnW4jN4eYkAzOqAQ==/109951168270380190.jpg',
+        lrc: ''
+    },
+    {
+        name: '起风了',
+        artist: '买辣椒也用券',
+        url: 'https://music.163.com/song/media/outer/url?id=3387456784.mp3',
+        cover: 'https://p2.music.126.net/di_MqRXivXO_uWgSXzSQ0g==/109951168946376722.jpg',
+        lrc: ''
+    },
+    {
+        name: '芒种',
+        artist: '赵方婧',
+        url: 'https://music.163.com/song/media/outer/url?id=1497597539.mp3',
+        cover: 'https://p2.music.126.net/7_0IoCiEHSFGJvMBEBsAOA==/109951168599346861.jpg',
+        lrc: ''
+    }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+    var check = setInterval(function() {
+        if (typeof initPlayer === 'function') {
+            clearInterval(check);
+            window._customPlayer = initPlayer(window.__PLAYER_PLAYLIST__);
+        }
+    }, 200);
+});
+</script>
+
+<script>
+function refreshVercount() {
+    var url = encodeURIComponent(window.location.href);
+    fetch('https://cn.vercount.one/api?url=' + url)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var pagePv = document.getElementById('vercount_value_page_pv');
+            if (pagePv && data.page_pv) pagePv.textContent = data.page_pv;
+            var sitePv = document.getElementById('vercount_value_site_pv');
+            if (sitePv && data.site_pv) sitePv.textContent = data.site_pv;
+            var siteUv = document.getElementById('vercount_value_site_uv');
+            if (siteUv && data.site_uv) siteUv.textContent = data.site_uv;
+        }).catch(function(e) { console.log('vercount refresh:', e); });
+}
+
+function showHideView() {
+    var viewCounts = document.querySelectorAll(".viewCount");
+    if (viewCounts.length > 0) {
+        var article = document.querySelector(".article-page");
+        if (!article) {
+            viewCounts.forEach(function(ele) { ele.style.display = 'none'; });
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    showHideView();
+    refreshVercount();
+    setTimeout(refreshVercount, 2000);
+});
+</script>

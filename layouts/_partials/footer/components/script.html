@@ -7,3 +7,5 @@
     {{- $customScript := . | js.Build $opts | fingerprint -}}
     <script type="text/javascript" src="{{ $customScript.RelPermalink }}" defer></script>
 {{- end -}}
+
+<script type="text/javascript" src="{{ "js/player.js" | relURL }}" defer></script>
