@@ -9,11 +9,12 @@ draft: false
 
 ## 前言
 
-之前博客没有评论区，看其他大佬的博客都有评论区，就想自己也配置一个，最开始想到是利用ai帮忙写一个评论区，后面发现工作量有点大调试太麻烦了，于是就一直搁置了，然后后面搜索相关的内容的时候看到了 Giscus 这个项目，发现很适合hugo 这个stack主题进行一个评论区的搭建，一句话概括就是：**用 GitHub Discussions 当数据库的评论区**。
+之前博客没有评论区，看其他大佬的博客都有评论区，加上自己也想整活（bushi），就想自己也配置一个。最开始想到是利用 AI 帮忙写一个评论区，后面发现工作量有点大，调试太麻烦了，于是就一直搁置了。然后后面搜索相关的内容的时候看到了 Giscus 这个项目，发现很适合 Hugo 这个 Stack 主题进行一个评论区的搭建，一句话概括就是：**用 GitHub Discussions 当数据库的评论区**。
 
-而且上手很简单，加上不需要额外买服务器，不需要管数据库，访客用 GitHub 账号就能登录评论，所有数据都存在你自己仓库的 Discussions 里，完全可控。对咱们这种博客托管在 GitHub Pages 的开发者来说，简直就是天选方案。
+而且上手很简单，不需要额外买服务器，不需要管数据库，访客用 GitHub 账号就能登录评论，所有数据都存在你自己仓库的 Discussions 里，完全可控。对咱们这种博客托管在 GitHub Pages 的开发者来说，简直就是天选方案。
 
 这篇文章会从零开始，完整记录我配置的全过程，包括中间踩的坑，希望能帮你少走点弯路。
+
 ---
 
 ## 前置准备
@@ -22,16 +23,20 @@ draft: false
 
 ### 1. 一个 GitHub 仓库
 
-这个不需要多说，如果你是像我一样使用hugo+stack主题，利用github pages托管博客的话。那么你的 Hugo 博客源码肯定已经在 GitHub 上了。我的是 `neutrino843/neutrino843.github.io`，后面配置的时候会用到。
+这个不需要多说，如果你是像我一样使用 Hugo + Stack 主题，利用 GitHub Pages 托管博客的话，那么你的 Hugo 博客源码肯定已经在 GitHub 上了。我的是 `neutrino843/neutrino843.github.io`，后面配置的时候会用到。
 
 ### 2. 开启 GitHub Discussions
 
 这是最简单的一步，一定要去确认一下仓库的 Discussions 功能是否开启了。
 
 首先去你仓库的 Settings 页面（https://github.com/你的用户名/仓库名/settings），往下翻到 **Features** 区域：
+
 **勾选 Discussions**
-![alt text](image.png)
+
+![在 Settings 页面勾选 Discussions 的界面](image.png)
+
 搞定之后，你仓库顶部的标签栏会多出一个 **Discussions** 的 Tab，说明成功了。
+
 ### 3. 安装 Giscus GitHub App
 
 打开 https://github.com/apps/giscus，点击 **Install**，选择你的仓库，授权。这一步是为了让访客能用 GitHub 账号登录发表评论。
@@ -43,17 +48,17 @@ draft: false
 | 字段 | 填写内容 |
 |------|----------|
 | **Language** | 选 **简体中文** |
-| **Repository** | 输入 `你的用户名/仓库名`，比如 我的就是
-`https://github.com/neutrino843/neutrino843.github.io` |
+| **Repository** | 输入 `你的用户名/仓库名`，比如我的就是 `https://github.com/neutrino843/neutrino843.github.io` |
 
 填完仓库名之后，Giscus 会自动验证。如果 Discussions 没开启，它会提示你"该仓库尚未启用 Discussions"——那你就回到第 2 步去勾上，然后刷新页面。
-> (这里有一个注意点，要记得满足上述的三个要求，先确认自己的仓库是否是公开的，然后是否安装了giscus app，如果没有的话点击网页上的链接然后安装，接着
-![alt text](image-1.png)
 
-一定要确认这一步是否选择了，不然容易出现错误，如下：
-![alt text](image-2.png)
-
-最后确认是否开启了 Discussions 功能。)
+> 这里有一个注意点，要记得满足上述的三个要求：先确认自己的仓库是否是公开的，然后确认是否安装了 Giscus App（如果没有的话点击网页上的链接然后安装），最后确认是否开启了 Discussions 功能。
+>
+> ![确认 Giscus App 是否安装的界面](image-1.png)
+>
+> 一定要确认这一步是否选择了，不然容易出现错误，如下：
+>
+> ![未授权时出现的错误提示界面](image-2.png)
 
 验证通过后，继续往下看：
 
@@ -63,9 +68,9 @@ draft: false
 | **Mapping** | 选 **Discussion title contains page pathname** |
 | **Theme** | 看你喜好，我选的 **Preferred color scheme** |
 
-> 这里有个坑：因为我是参考ai给出的指导，他当时说是Discussion，我找半天没找到Discussion，当时在这愣了半天，以为是页面没加载出来……后面发现就是选中文显示的Discussion  QAQ
+> 这里有个坑：因为我是参考 AI 给出的指导，他当时说是 Category，我找半天没找到 Category，在这愣了半天，以为是页面没加载出来……后面发现就是选中文显示的 Discussion QAQ
 
-选完 Discussion 之后，页面的“启用giscus”这个标签下面，会自动生成一段 `<script>` 代码，大概长这样：
+选完 Category 之后，页面的"启用 Giscus"这个标签下面，会自动生成一段 `<script>` 代码，大概长这样：
 
 ```html
 <script src="https://giscus.app/client.js"
@@ -91,8 +96,9 @@ draft: false
 
 ## Hugo Stack 主题配置
 
-好消息是：Hugo Stack 主题**原生就支持 Giscus**，不需要自己写模板代码，只需要改配置文件就行。所以只需要在配置文件里改一下，就可以使用 Giscus 评论系统。
-> **注意**：Stack 主题默认是 Disqus Disqus 评论系统，所以要切换到 Giscus，需要在配置文件里修改一下。
+好消息是：Hugo Stack 主题**原生就支持 Giscus**，不需要自己写模板代码，只需要改配置文件就行。
+
+> **注意**：Stack 主题默认使用的是 Disqus 评论系统，所以要切换到 Giscus，需要在配置文件里修改一下。
 
 ### 修改站点配置文件
 
