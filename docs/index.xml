@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>neutrino的博客</title><link>https://neutrino843.github.io/</link><description>Recent content on neutrino的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 09 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>给Hugo Stack主题配置Giscus评论区</title><link>https://neutrino843.github.io/post/hugo-stack-giscus-comment/</link><pubDate>Tue, 09 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/hugo-stack-giscus-comment/</guid><description>&lt;h2 id="前言"&gt;前言
-&lt;/h2&gt;&lt;p&gt;之前博客没有评论区，看其他大佬的博客都有评论区，就想自己也配置一个，最开始想到是利用ai帮忙写一个评论区，后面发现工作量有点大调试太麻烦了，于是就一直搁置了，然后后面搜索相关的内容的时候看到了 Giscus 这个项目，发现很适合hugo 这个stack主题进行一个评论区的搭建，一句话概括就是：&lt;strong&gt;用 GitHub Discussions 当数据库的评论区&lt;/strong&gt;。&lt;/p&gt;
-&lt;p&gt;而且上手很简单，加上不需要额外买服务器，不需要管数据库，访客用 GitHub 账号就能登录评论，所有数据都存在你自己仓库的 Discussions 里，完全可控。对咱们这种博客托管在 GitHub Pages 的开发者来说，简直就是天选方案。&lt;/p&gt;
-&lt;h2 id="这篇文章会从零开始完整记录我配置的全过程包括中间踩的坑希望能帮你少走点弯路"&gt;这篇文章会从零开始，完整记录我配置的全过程，包括中间踩的坑，希望能帮你少走点弯路。
-&lt;/h2&gt;&lt;h2 id="前置准备"&gt;前置准备
+&lt;/h2&gt;&lt;p&gt;之前博客没有评论区，看其他大佬的博客都有评论区，加上自己也想整活（bushi），就想自己也配置一个。最开始想到是利用 AI 帮忙写一个评论区，后面发现工作量有点大，调试太麻烦了，于是就一直搁置了。然后后面搜索相关的内容的时候看到了 Giscus 这个项目，发现很适合 Hugo 这个 Stack 主题进行一个评论区的搭建，一句话概括就是：&lt;strong&gt;用 GitHub Discussions 当数据库的评论区&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;而且上手很简单，不需要额外买服务器，不需要管数据库，访客用 GitHub 账号就能登录评论，所有数据都存在你自己仓库的 Discussions 里，完全可控。对咱们这种博客托管在 GitHub Pages 的开发者来说，简直就是天选方案。&lt;/p&gt;
+&lt;p&gt;这篇文章会从零开始，完整记录我配置的全过程，包括中间踩的坑，希望能帮你少走点弯路。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="前置准备"&gt;前置准备
 &lt;/h2&gt;&lt;p&gt;在动手改代码之前，先把这几件事搞定：&lt;/p&gt;
 &lt;h3 id="1-一个-github-仓库"&gt;1. 一个 GitHub 仓库
-&lt;/h3&gt;&lt;p&gt;这个不需要多说，如果你是像我一样使用hugo+stack主题，利用github pages托管博客的话。那么你的 Hugo 博客源码肯定已经在 GitHub 上了。我的是 &lt;code&gt;neutrino843/neutrino843.github.io&lt;/code&gt;，后面配置的时候会用到。&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;这个不需要多说，如果你是像我一样使用 Hugo + Stack 主题，利用 GitHub Pages 托管博客的话，那么你的 Hugo 博客源码肯定已经在 GitHub 上了。我的是 &lt;code&gt;neutrino843/neutrino843.github.io&lt;/code&gt;，后面配置的时候会用到。&lt;/p&gt;
 &lt;h3 id="2-开启-github-discussions"&gt;2. 开启 GitHub Discussions
 &lt;/h3&gt;&lt;p&gt;这是最简单的一步，一定要去确认一下仓库的 Discussions 功能是否开启了。&lt;/p&gt;
-&lt;p&gt;首先去你仓库的 Settings 页面（https://github.com/你的用户名/仓库名/settings），往下翻到 &lt;strong&gt;Features&lt;/strong&gt; 区域：
-&lt;strong&gt;勾选 Discussions&lt;/strong&gt;
-&lt;img alt="alt text" class="gallery-image" data-flex-basis="273px" data-flex-grow="113" height="1076" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image.png" srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_603bac65b6753c52.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image.png 1224w" width="1224"&gt;
-搞定之后，你仓库顶部的标签栏会多出一个 &lt;strong&gt;Discussions&lt;/strong&gt; 的 Tab，说明成功了。&lt;/p&gt;
+&lt;p&gt;首先去你仓库的 Settings 页面（https://github.com/你的用户名/仓库名/settings），往下翻到 &lt;strong&gt;Features&lt;/strong&gt; 区域：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;勾选 Discussions&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="在 Settings 页面勾选 Discussions 的界面" class="gallery-image" data-flex-basis="273px" data-flex-grow="113" height="1076" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image.png" srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_603bac65b6753c52.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image.png 1224w" width="1224"&gt;&lt;/p&gt;
+&lt;p&gt;搞定之后，你仓库顶部的标签栏会多出一个 &lt;strong&gt;Discussions&lt;/strong&gt; 的 Tab，说明成功了。&lt;/p&gt;
 &lt;h3 id="3-安装-giscus-github-app"&gt;3. 安装 Giscus GitHub App
 &lt;/h3&gt;&lt;p&gt;打开 &lt;a class="link" href="https://github.com/apps/giscus" target="_blank" rel="noopener"
  &gt;https://github.com/apps/giscus&lt;/a&gt;，点击 &lt;strong&gt;Install&lt;/strong&gt;，选择你的仓库，授权。这一步是为了让访客能用 GitHub 账号登录发表评论。&lt;/p&gt;
@@ -32,24 +33,19 @@
  &lt;/tr&gt;
  &lt;tr&gt;
  &lt;td&gt;&lt;strong&gt;Repository&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;输入 &lt;code&gt;你的用户名/仓库名&lt;/code&gt;，比如 我的就是&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;code&gt;https://github.com/neutrino843/neutrino843.github.io&lt;/code&gt;&lt;/td&gt;
- &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;输入 &lt;code&gt;你的用户名/仓库名&lt;/code&gt;，比如我的就是 &lt;code&gt;https://github.com/neutrino843/neutrino843.github.io&lt;/code&gt;&lt;/td&gt;
  &lt;/tr&gt;
  &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;填完仓库名之后，Giscus 会自动验证。如果 Discussions 没开启，它会提示你&amp;quot;该仓库尚未启用 Discussions&amp;quot;——那你就回到第 2 步去勾上，然后刷新页面。&lt;/p&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;(这里有一个注意点，要记得满足上述的三个要求，先确认自己的仓库是否是公开的，然后是否安装了giscus app，如果没有的话点击网页上的链接然后安装，接着
-&lt;img alt="alt text" class="gallery-image" data-flex-basis="264px" data-flex-grow="110" height="1151" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1.png" srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_bead6811e08cbb0f.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1.png 1269w" width="1269"&gt;&lt;/p&gt;
+ &lt;p&gt;这里有一个注意点，要记得满足上述的三个要求：先确认自己的仓库是否是公开的，然后确认是否安装了 Giscus App（如果没有的话点击网页上的链接然后安装），最后确认是否开启了 Discussions 功能。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="确认 Giscus App 是否安装的界面" class="gallery-image" data-flex-basis="264px" data-flex-grow="110" height="1151" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1.png" srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_bead6811e08cbb0f.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1.png 1269w" width="1269"&gt;&lt;/p&gt;
+&lt;p&gt;一定要确认这一步是否选择了，不然容易出现错误，如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="未授权时出现的错误提示界面" class="gallery-image" data-flex-basis="399px" data-flex-grow="166" height="384" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-2.png" width="639"&gt;&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;一定要确认这一步是否选择了，不然容易出现错误，如下：
-&lt;img alt="alt text" class="gallery-image" data-flex-basis="399px" data-flex-grow="166" height="384" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-2.png" width="639"&gt;&lt;/p&gt;
-&lt;p&gt;最后确认是否开启了 Discussions 功能。)&lt;/p&gt;
 &lt;p&gt;验证通过后，继续往下看：&lt;/p&gt;
 &lt;table&gt;
  &lt;thead&gt;
@@ -75,10 +71,10 @@
 &lt;/table&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;这里有个坑：因为我是参考ai给出的指导，他当时说是Discussion，我找半天没找到Discussion，当时在这愣了半天，以为是页面没加载出来……后面发现就是选中文显示的Discussion QAQ&lt;/p&gt;
+ &lt;p&gt;这里有个坑：因为我是参考 AI 给出的指导，他当时说是 Category，我找半天没找到 Category，在这愣了半天，以为是页面没加载出来……后面发现就是选中文显示的 Discussion QAQ&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;选完 Discussion 之后，页面的“启用giscus”这个标签下面，会自动生成一段 &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; 代码，大概长这样：&lt;/p&gt;
+&lt;p&gt;选完 Category 之后，页面的&amp;quot;启用 Giscus&amp;quot;这个标签下面，会自动生成一段 &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; 代码，大概长这样：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
@@ -118,10 +114,10 @@
 &lt;/div&gt;&lt;p&gt;把这段代码里的 &lt;code&gt;data-repo-id&lt;/code&gt; 和 &lt;code&gt;data-category-id&lt;/code&gt; 记下来，后面要用，如果没有的话检查一下是不是前面哪一步漏了。&lt;strong&gt;这两个值每个仓库都不一样&lt;/strong&gt;。&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="hugo-stack-主题配置"&gt;Hugo Stack 主题配置
-&lt;/h2&gt;&lt;p&gt;好消息是：Hugo Stack 主题&lt;strong&gt;原生就支持 Giscus&lt;/strong&gt;，不需要自己写模板代码，只需要改配置文件就行。所以只需要在配置文件里改一下，就可以使用 Giscus 评论系统。&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;好消息是：Hugo Stack 主题&lt;strong&gt;原生就支持 Giscus&lt;/strong&gt;，不需要自己写模板代码，只需要改配置文件就行。&lt;/p&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：Stack 主题默认是 Disqus Disqus 评论系统，所以要切换到 Giscus，需要在配置文件里修改一下。&lt;/p&gt;
+ &lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：Stack 主题默认使用的是 Disqus 评论系统，所以要切换到 Giscus，需要在配置文件里修改一下。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;h3 id="修改站点配置文件"&gt;修改站点配置文件
