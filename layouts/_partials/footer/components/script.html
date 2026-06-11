@@ -8,4 +8,8 @@
     <script type="text/javascript" src="{{ $customScript.RelPermalink }}" defer></script>
 {{- end -}}
 
-<script type="text/javascript" src="{{ "js/player.js" | relURL }}" defer></script>
+{{- with resources.Get "ts/player.ts" -}}
+    {{- $playerScript := . | js.Build (dict "minify" hugo.IsProduction) | fingerprint -}}
+    <script type="text/javascript" src="{{ $playerScript.RelPermalink }}" defer></script>
+{{- end -}}
+

@@ -1,0 +1,56 @@
+#------------------------------------------------------------------------------
+# GitHub Pages 缓存策略配置
+# 带指纹哈希的资源（CSS/JS/图片）设 1 年强缓存 + immutable
+# HTML 文件不缓存，确保内容即时更新
+#------------------------------------------------------------------------------
+
+# HTML: 不缓存，每次请求验证新鲜度
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# CSS: 带指纹哈希，可以永久缓存
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# JavaScript: 带指纹哈希，可以永久缓存
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+# 图片资源: 带指纹哈希，可以永久缓存
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.avif
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.gif
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+
+# Web 字体: 可永久缓存
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+# 其他静态资源
+/*.json
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.xml
+  Cache-Control: public, max-age=31536000, immutable

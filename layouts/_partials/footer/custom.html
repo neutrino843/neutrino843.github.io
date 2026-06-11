@@ -1,9 +1,10 @@
 {{- $bgImg := resources.Get "background/新背景.png" -}}
+{{- $bgImgWebp := $bgImg | images.Filter (images.Process "webp q80") -}}
 {{- $particlesConfig := resources.Get "background/particlesjs-config.json" -}}
 {{- if $bgImg -}}
 <style>
   body {
-    background: url({{ $bgImg.Permalink }}) no-repeat center 17%;
+    background: url({{ $bgImgWebp.RelPermalink }}) no-repeat center 17%;
     background-size: cover;
     background-attachment: fixed;
   }
@@ -34,42 +35,6 @@
 
 <script defer src="https://cn.vercount.one/js"></script>
 
-{{/* Custom Music Player - playlist configuration */}}
-<script>
-window.__PLAYER_PLAYLIST__ = [
-    {
-        name: '山外小楼夜听雨',
-        artist: '任然',
-        url: 'https://music.163.com/song/media/outer/url?id=1856342825.mp3',
-        cover: 'https://p2.music.126.net/rxHP5vwnW4jN4eYkAzOqAQ==/109951168270380190.jpg',
-        lrc: ''
-    },
-    {
-        name: '起风了',
-        artist: '买辣椒也用券',
-        url: 'https://music.163.com/song/media/outer/url?id=3387456784.mp3',
-        cover: 'https://p2.music.126.net/di_MqRXivXO_uWgSXzSQ0g==/109951168946376722.jpg',
-        lrc: ''
-    },
-    {
-        name: '芒种',
-        artist: '赵方婧',
-        url: 'https://music.163.com/song/media/outer/url?id=1497597539.mp3',
-        cover: 'https://p2.music.126.net/7_0IoCiEHSFGJvMBEBsAOA==/109951168599346861.jpg',
-        lrc: ''
-    }
-];
-
-document.addEventListener('DOMContentLoaded', function() {
-    var check = setInterval(function() {
-        if (typeof initPlayer === 'function') {
-            clearInterval(check);
-            window._customPlayer = initPlayer(window.__PLAYER_PLAYLIST__);
-        }
-    }, 200);
-});
-</script>
-
 <script>
 function refreshVercount() {
     var url = encodeURIComponent(window.location.href);
@@ -95,9 +60,60 @@ function showHideView() {
     }
 }
 
+// Defer non-critical work to idle time
+if ('requestIdleCallback' in window) {
+    requestIdleCallback(function() {
+        showHideView();
+        refreshVercount();
+        setTimeout(refreshVercount, 2000);
+    }, { timeout: 3000 });
+} else {
+    document.addEventListener('DOMContentLoaded', function() {
+        showHideView();
+        refreshVercount();
+        setTimeout(refreshVercount, 2000);
+    });
+}
+</script>
+
+{{/* Music Player - playlist configuration */}}
+{{- $playerEnabled := true -}}
+{{- if $playerEnabled -}}
+<script>
+// Music player initializer - called after player.ts loads
+window.__PLAYER_CONFIG__ = {
+    playlist: [
+        { name: '蝴蝶', artist: '洛天依,桃小薇', file: '洛天依,桃小薇 - 蝴蝶.mp3' },
+        { name: '海德格尔', artist: '言和', file: '言和 - 海德格尔.mp3' },
+        { name: '鬼ごっこ', artist: '春野,洛天依', file: '春野,洛天依 - 鬼ごっこ.mp3' },
+        { name: '焦糖星', artist: 'warma', file: 'warma - 焦糖星.mp3' },
+        { name: '妄想Reality', artist: '洛天依Official,言和,乐正绫', file: '洛天依Official,言和,乐正绫 - 妄想Reality.mp3' },
+        { name: 'さがさないでください', artist: '中瀬ミル,是,初音ミク', file: '中瀬ミル,是,初音ミク - さがさないでください.mp3' },
+        { name: '烂掉的白月光', artist: '洛天依,乐正绫,路明熹', file: '洛天依,乐正绫,路明熹 - 烂掉的白月光.mp3' },
+        { name: '黑色猫猫和它的影子 feat. 初音ミク', artist: 'Magens', file: 'Magens - 黑色猫猫和它的影子 feat. 初音ミク.mp3' },
+        { name: '天地大旋转', artist: '凤梨酥,贰零Levent', file: '凤梨酥,贰零Levent - 天地大旋转.mp3' },
+        { name: '点燃我', artist: '绯雾Fitwar', file: '绯雾Fitwar - 点燃我.mp3' },
+        { name: '深渊浪漫主义 ft. 诗岸', artist: 'Kolaa,诗岸', file: 'Kolaa,诗岸 - 深渊浪漫主义 ft. 诗岸.mp3' },
+        { name: '心理委员', artist: '粟粟粟粟粟粟粟', file: '粟粟粟粟粟粟粟 - 心理委员.mp3' },
+        { name: '泛泛人类不会祈祷', artist: '一碗热汤p', file: '一碗热汤p - 泛泛人类不会祈祷.mp3' },
+        { name: '未尽', artist: '1-Zero,洛天依Official,徵羽摩柯', file: '1-Zero,洛天依Official,徵羽摩柯 - 未尽.mp3' },
+        { name: '垃圾桶里的糖（feat.星尘infinity）', artist: '戬希Haleksius', file: '戬希Haleksius - 垃圾桶里的糖（feat.星尘infinity ）.mp3' },
+        { name: '请不要带我走。', artist: '奥莉安多幻想曲,诗岸', file: '奥莉安多幻想曲,诗岸 - 请不要带我走。.mp3' }
+    ],
+    defaultVolume: 0.5,
+    autoplay: true
+};
+
 document.addEventListener('DOMContentLoaded', function() {
-    showHideView();
-    refreshVercount();
-    setTimeout(refreshVercount, 2000);
+    // Wait for player script to load and expose initPlayer
+    var check = setInterval(function() {
+        if (typeof initPlayer === 'function') {
+            clearInterval(check);
+            window.__player = initPlayer(window.__PLAYER_CONFIG__);
+        }
+    }, 200);
+    // Safety: stop checking after 10 seconds
+    setTimeout(function() { clearInterval(check); }, 10000);
 });
 </script>
+{{- end -}}

@@ -3,31 +3,69 @@ Params:
     Resource: Hugo image resource object (Optional, for processing)
     Widths: Slice of widths to generate for srcset
     Attributes: Map of HTML attributes for the <img> tag
+
+Enhanced: Outputs WebP <source> inside a <picture> element when possible.
 */ -}}
 
 {{- $resource := .Resource -}}
 {{- $widths := .Widths -}}
 {{- $attributes := .Attributes | default dict -}}
 
-{{/* Generate srcset if Resource and Widths are provided */}}
-{{- if and $widths $resource (reflect.IsImageResourceProcessable $resource) -}}
-    {{- $srcset := slice -}}
+{{- /* Check if we can process this image (not SVG, not remote without processing) */ -}}
+{{- $processable := and $widths $resource (reflect.IsImageResourceProcessable $resource) -}}
+
+{{- if $processable -}}
+    {{- /* Generate WebP srcset */ -}}
+    {{- $webpSrcset := slice -}}
+    {{- $fallbackSrcset := slice -}}
     {{- range $widths -}}
         {{- if lt . $resource.Width -}}
             {{- $resized := $resource.Resize (printf "%dx" .) -}}
-            {{- $srcset = $srcset | append (printf "%s %dw" $resized.RelPermalink .) -}}
+            {{- $webpResized := $resource.Resize (printf "%dx webp" .) -}}
+            {{- $webpSrcset = $webpSrcset | append (printf "%s %dw" $webpResized.RelPermalink .) -}}
+            {{- $fallbackSrcset = $fallbackSrcset | append (printf "%s %dw" $resized.RelPermalink .) -}}
         {{- end -}}
     {{- end -}}
-    
-    {{- if gt (len $srcset) 0 -}}
-        {{- $permalink := default $resource.RelPermalink (index $attributes "src") -}}
-        {{- $srcset = $srcset | append (printf "%s %dw" $permalink $resource.Width) -}}
-        {{- $attributes = merge $attributes (dict "srcset" (delimit $srcset ", ")) -}}
-    {{- end -}}
-{{- end -}}
 
-<img {{- range $k, $v := $attributes -}}
-    {{- if $v -}}
-        {{- printf " %s=%q" (lower $k) (printf "%v" $v) | safeHTMLAttr -}}
-    {{- end -}}
-{{- end -}}>
+    {{- /* Original size */ -}}
+    {{- $webpFull := $resource.Resize (printf "%dx webp" $resource.Width) -}}
+    {{- $webpSrcset = $webpSrcset | append (printf "%s %dw" $webpFull.RelPermalink $resource.Width) -}}
+    {{- $fallbackSrcset = $fallbackSrcset | append (printf "%s %dw" $resource.RelPermalink $resource.Width) -}}
+
+    {{- $alt := index $attributes "alt" -}}
+    {{- $title := index $attributes "title" -}}
+    {{- $class := index $attributes "class" -}}
+    {{- $loading := index $attributes "loading" -}}
+    {{- $sizes := index $attributes "sizes" -}}
+    {{- $width := index $attributes "width" -}}
+    {{- $height := index $attributes "height" -}}
+
+    <picture>
+        <source srcset="{{ delimit $webpSrcset ", " }}" type="image/webp"{{ if $sizes }} sizes="{{ $sizes }}"{{ end }}>
+        <source srcset="{{ delimit $fallbackSrcset ", " }}" type="{{ $resource.MediaType }}"{{ if $sizes }} sizes="{{ $sizes }}"{{ end }}>
+        <img
+            src="{{ $resource.RelPermalink }}"
+            width="{{ $resource.Width }}"
+            height="{{ $resource.Height }}"
+            {{- with $alt }} alt="{{ . }}"{{ end }}
+            {{- with $title }} title="{{ . }}"{{ end }}
+            {{- with $class }} class="{{ . }}"{{ end }}
+            {{- with $loading }} loading="{{ . }}"{{ end }}
+            {{- with $sizes }} sizes="{{ . }}"{{ end }}
+            {{- range $k, $v := $attributes -}}
+                {{- if not (in (slice "alt" "title" "class" "loading" "sizes" "width" "height" "src") $k) -}}
+                    {{- if $v -}}
+                        {{- printf " %s=%q" (lower $k) (printf "%v" $v) | safeHTMLAttr -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        >
+    </picture>
+{{- else -}}
+    {{- /* Fallback: standard <img> tag when processing isn't possible (SVG, remote, etc.) */ -}}
+    <img {{- range $k, $v := $attributes -}}
+        {{- if $v -}}
+            {{- printf " %s=%q" (lower $k) (printf "%v" $v) | safeHTMLAttr -}}
+        {{- end -}}
+    {{- end -}}>
+{{- end -}}

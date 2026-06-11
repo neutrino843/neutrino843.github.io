@@ -11,7 +11,14 @@
 &lt;/h3&gt;&lt;p&gt;这是最简单的一步，一定要去确认一下仓库的 Discussions 功能是否开启了。&lt;/p&gt;
 &lt;p&gt;首先去你仓库的 Settings 页面（https://github.com/你的用户名/仓库名/settings），往下翻到 &lt;strong&gt;Features&lt;/strong&gt; 区域：&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;勾选 Discussions&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="在 Settings 页面勾选 Discussions 的界面" class="gallery-image" data-flex-basis="273px" data-flex-grow="113" height="1076" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image.png" srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_603bac65b6753c52.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image.png 1224w" width="1224"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_a3c4696ce2279e0c.webp 480w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_ba776324e9d0fc1e.webp 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_efbc92cd196a634c.webp 1224w" type="image/webp" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_3950d930e47b9462.png 480w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_d22c7e0d2a0f0aa4.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_e47e5f41a3a0a8d.png 1224w" type="image/png" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;img
+ src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image_hu_e47e5f41a3a0a8d.png"
+ width="1224"
+ height="1076" alt="在 Settings 页面勾选 Discussions 的界面" class="gallery-image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" data-flex-basis="273px" data-flex-grow="113"&gt;
+ &lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;搞定之后，你仓库顶部的标签栏会多出一个 &lt;strong&gt;Discussions&lt;/strong&gt; 的 Tab，说明成功了。&lt;/p&gt;
 &lt;h3 id="3-安装-giscus-github-app"&gt;3. 安装 Giscus GitHub App
 &lt;/h3&gt;&lt;p&gt;打开 &lt;a class="link" href="https://github.com/apps/giscus" target="_blank" rel="noopener"
@@ -41,9 +48,23 @@
 
  &lt;blockquote&gt;
  &lt;p&gt;这里有一个注意点，要记得满足上述的三个要求：先确认自己的仓库是否是公开的，然后确认是否安装了 Giscus App（如果没有的话点击网页上的链接然后安装），最后确认是否开启了 Discussions 功能。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="确认 Giscus App 是否安装的界面" class="gallery-image" data-flex-basis="264px" data-flex-grow="110" height="1151" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1.png" srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_bead6811e08cbb0f.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1.png 1269w" width="1269"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_916f7bcbd8f335f5.webp 480w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_63c21aca7d922041.webp 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_282d50a3dca08492.webp 1269w" type="image/webp" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_ccd913894e8ac198.png 480w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_a115cfb1ca1d323e.png 800w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_486a2606d5792cae.png 1269w" type="image/png" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;img
+ src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-1_hu_486a2606d5792cae.png"
+ width="1269"
+ height="1151" alt="确认 Giscus App 是否安装的界面" class="gallery-image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" data-flex-basis="264px" data-flex-grow="110"&gt;
+ &lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;一定要确认这一步是否选择了，不然容易出现错误，如下：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="未授权时出现的错误提示界面" class="gallery-image" data-flex-basis="399px" data-flex-grow="166" height="384" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-2.png" width="639"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-2_hu_6325a0d40cd7dc91.webp 480w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-2_hu_cf0043441e6220c.webp 639w" type="image/webp" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-2_hu_fe06f6a948ec87be.png 480w, https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-2_hu_175c49e9c6a25c24.png 639w" type="image/png" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;img
+ src="https://neutrino843.github.io/post/hugo-stack-giscus-comment/image-2_hu_175c49e9c6a25c24.png"
+ width="639"
+ height="384" alt="未授权时出现的错误提示界面" class="gallery-image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" data-flex-basis="399px" data-flex-grow="166"&gt;
+ &lt;/picture&gt;&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;p&gt;验证通过后，继续往下看：&lt;/p&gt;
@@ -581,7 +602,14 @@
 &lt;p&gt;相同的原理都适用：保持组件灵活、可组合，并由清晰、结构良好的提示驱动。&lt;/p&gt;
 &lt;h3 id="管理器模式manager-pattern"&gt;管理器模式（Manager Pattern）
 &lt;/h3&gt;&lt;p&gt;一个中心的&amp;quot;管理器&amp;quot;Agent通过工具调用协调多个专业Agent，每个Agent处理特定的任务或领域。管理器负责分发任务、汇总结果，而子Agent专注于各自的专业领域。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="管理器模式架构图" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="680" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/building-ai-agent-guide/image2.webp" srcset="https://neutrino843.github.io/post/building-ai-agent-guide/image2_hu_ef6441eef43322c2.webp 800w, https://neutrino843.github.io/post/building-ai-agent-guide/image2.webp 1208w" width="1208"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/building-ai-agent-guide/image2_hu_a7e2912fcb5184c2.webp 480w, https://neutrino843.github.io/post/building-ai-agent-guide/image2_hu_21d6ea8a018858f9.webp 800w, https://neutrino843.github.io/post/building-ai-agent-guide/image2_hu_97c612bb522495ac.webp 1208w" type="image/webp" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/building-ai-agent-guide/image2_hu_bfc48044f1d6ffa7.webp 480w, https://neutrino843.github.io/post/building-ai-agent-guide/image2_hu_1c5b0ba7706f41ff.webp 800w, https://neutrino843.github.io/post/building-ai-agent-guide/image2_hu_9b92110e78566587.webp 1208w" type="image/webp" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;img
+ src="https://neutrino843.github.io/post/building-ai-agent-guide/image2_hu_9b92110e78566587.webp"
+ width="1208"
+ height="680" alt="管理器模式架构图" class="gallery-image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" data-flex-basis="426px" data-flex-grow="177"&gt;
+ &lt;/picture&gt;&lt;/p&gt;
 &lt;h3 id="框架对比声明式-vs-代码优先"&gt;框架对比：声明式 vs 代码优先
 &lt;/h3&gt;&lt;table&gt;
  &lt;thead&gt;
@@ -617,14 +645,28 @@
 &lt;h3 id="63-去中心化模式与交接handoff"&gt;6.3 去中心化模式与交接（Handoff）
 &lt;/h3&gt;&lt;p&gt;去中心化模式下，多个Agent作为对等体运行，根据各自的专业化将任务传递给彼此。Agent可以相互&amp;quot;交接&amp;quot;工作流执行。&lt;/p&gt;
 &lt;p&gt;**交接（Handoff）**是一种单向传输，允许一个Agent将任务委托给另一个Agent。在Agent SDK中，交接被实现为一种工具或函数。如果一个Agent调用交接函数，系统将立即在新被交接到的Agent上开始执行，并同时传输最新的对话状态。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="去中心化交接模式" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="680" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/building-ai-agent-guide/image3.webp" srcset="https://neutrino843.github.io/post/building-ai-agent-guide/image3_hu_de6f62afcca300f0.webp 800w, https://neutrino843.github.io/post/building-ai-agent-guide/image3.webp 1208w" width="1208"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/building-ai-agent-guide/image3_hu_6810258b14c70175.webp 480w, https://neutrino843.github.io/post/building-ai-agent-guide/image3_hu_e41118e31068fcf8.webp 800w, https://neutrino843.github.io/post/building-ai-agent-guide/image3_hu_a4f94358eebec1d6.webp 1208w" type="image/webp" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/building-ai-agent-guide/image3_hu_c1bd76c0f962bd51.webp 480w, https://neutrino843.github.io/post/building-ai-agent-guide/image3_hu_54b742c871ab3ffd.webp 800w, https://neutrino843.github.io/post/building-ai-agent-guide/image3_hu_c9bb50d1f7ca0110.webp 1208w" type="image/webp" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;img
+ src="https://neutrino843.github.io/post/building-ai-agent-guide/image3_hu_c9bb50d1f7ca0110.webp"
+ width="1208"
+ height="680" alt="去中心化交接模式" class="gallery-image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" data-flex-basis="426px" data-flex-grow="177"&gt;
+ &lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;此模式特别适用于以下场景：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;对话分类&lt;/strong&gt;：将用户请求路由到最合适的专业Agent&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;任务完全接管&lt;/strong&gt;：让专门的Agent完全接管某些任务，而无需原始Agent保持参与&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;往返交接&lt;/strong&gt;：可以给第二个Agent配备一个转接回原始Agent的功能，允许它在必要时再次转移控制权&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="交接流程示意" class="gallery-image" data-flex-basis="240px" data-flex-grow="100" height="1208" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://neutrino843.github.io/post/building-ai-agent-guide/image4.webp" srcset="https://neutrino843.github.io/post/building-ai-agent-guide/image4_hu_7b3a703f6418ac9c.webp 800w, https://neutrino843.github.io/post/building-ai-agent-guide/image4.webp 1208w" width="1208"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;picture&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/building-ai-agent-guide/image4_hu_9098dc65c6d3a92a.webp 480w, https://neutrino843.github.io/post/building-ai-agent-guide/image4_hu_92852618277c8243.webp 800w, https://neutrino843.github.io/post/building-ai-agent-guide/image4_hu_63c652c5190ec888.webp 1208w" type="image/webp" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;source srcset="https://neutrino843.github.io/post/building-ai-agent-guide/image4_hu_803d564fed70f377.webp 480w, https://neutrino843.github.io/post/building-ai-agent-guide/image4_hu_b90dada894cac9.webp 800w, https://neutrino843.github.io/post/building-ai-agent-guide/image4_hu_3c5886a8eadf51e2.webp 1208w" type="image/webp" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"&gt;
+ &lt;img
+ src="https://neutrino843.github.io/post/building-ai-agent-guide/image4_hu_3c5886a8eadf51e2.webp"
+ width="1208"
+ height="1208" alt="交接流程示意" class="gallery-image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" data-flex-basis="240px" data-flex-grow="100"&gt;
+ &lt;/picture&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="七安全护栏体系"&gt;七、安全护栏体系
 &lt;/h2&gt;&lt;p&gt;安全不是Agent系统的可选项，而是必选项。以下是多层次的防护体系：&lt;/p&gt;
