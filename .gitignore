@@ -21,3 +21,16 @@ Thumbs.db
 # Binaries
 hugo.exe
 *.exe
+
+# Reports & Documentation
+reports/
+docs/reports/
+审查报告.md
+*报告*.md
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.xls
+*.xlsx

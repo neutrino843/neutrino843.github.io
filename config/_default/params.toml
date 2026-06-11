@@ -43,6 +43,16 @@ favicon        = "img/avatar.jpg"
         strict           = 0
         loading          = "lazy"
 
+[imageProcessing]
+    autoOrient = true
+
+    [imageProcessing.content]
+        widths  = [480, 800, 1600]
+        enabled = true
+
+    [imageProcessing.thumbnail]
+        enabled = true
+
 # GDPR Cookie Consent Configuration
 # When enabled, analytics and functional cookies require user consent
 [cookies]

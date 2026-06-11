@@ -1,0 +1,94 @@
+{{- with .Site.Params.comments.giscus -}}
+<div id="giscus-placeholder" style="min-height: 200px;">
+    <div id="giscus-loading" style="text-align: center; padding: 3rem 1rem; color: var(--body-text-color); opacity: 0.6;">
+        <span>加载评论中...</span>
+    </div>
+</div>
+
+<script>
+(function() {
+    var placeholder = document.getElementById('giscus-placeholder');
+    if (!placeholder) return;
+
+    var loaded = false;
+    var giscusData = {
+        src: 'https://giscus.app/client.js',
+        'data-repo': '{{- .repo -}}',
+        'data-repo-id': '{{- .repoID -}}',
+        'data-category': '{{- .category -}}',
+        'data-category-id': '{{- .categoryID -}}',
+        'data-mapping': '{{- .mapping -}}',
+        'data-strict': '{{- .strict -}}',
+        'data-reactions-enabled': '{{- .reactionsEnabled -}}',
+        'data-emit-metadata': '{{- .emitMetadata -}}',
+        'data-input-position': '{{- .inputPosition -}}',
+        'data-theme': '{{- .lightTheme -}}',
+        'data-lang': '{{- .lang -}}',
+        'data-loading': 'lazy',
+        crossorigin: 'anonymous',
+        async: true
+    };
+
+    function loadGiscus() {
+        if (loaded) return;
+        loaded = true;
+
+        var script = document.createElement('script');
+        for (var key in giscusData) {
+            if (key === 'src') {
+                script.src = giscusData[key];
+            } else if (key === 'async') {
+                script.async = true;
+            } else if (key === 'crossorigin') {
+                script.crossOrigin = 'anonymous';
+            } else {
+                script.setAttribute(key, giscusData[key]);
+            }
+        }
+        placeholder.parentNode.insertBefore(script, placeholder);
+        var loadingEl = document.getElementById('giscus-loading');
+        if (loadingEl) loadingEl.style.display = 'none';
+    }
+
+    if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    loadGiscus();
+                    observer.disconnect();
+                }
+            });
+        }, { rootMargin: '200px' });
+        observer.observe(placeholder);
+    } else {
+        loadGiscus();
+    }
+
+    function setGiscusTheme(theme) {
+        var giscus = document.querySelector("iframe.giscus-frame");
+        if (giscus) {
+            giscus.contentWindow.postMessage(
+                { giscus: { setConfig: { theme: theme } } },
+                "https://giscus.app"
+            );
+        }
+    }
+
+    (function () {
+        addEventListener("message", function(e) {
+            if (event.origin !== "https://giscus.app") return;
+            handler();
+        });
+        window.addEventListener("onColorSchemeChange", handler);
+
+        function handler() {
+            if (document.documentElement.dataset.scheme === "light") {
+                setGiscusTheme('{{- .lightTheme -}}');
+            } else {
+                setGiscusTheme('{{- .darkTheme -}}');
+            }
+        }
+    })();
+})();
+</script>
+{{- end -}}
