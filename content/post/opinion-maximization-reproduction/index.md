@@ -209,7 +209,7 @@ DeGroot 模型下描绘了一个理想化的"舆论场"，所有人终将达成�
 | 维度 | 说明 |
 |:---:|:---:|
 | 优点 | 实现简单，思路直观 |
-| 缺点 | 采样数公式 ceil(n*log(n)/epsilon^2) 在大网络上会算出天量采样 |
+| 缺点 | 采样数公式 ceil(n*log(n)/epsilon^2) 在大网络上会算出超大量采样 |
 | 类比 | 像搞民意调查，随机抽一批人问"你信任谁"，被提到最多的就是意见领袖 |
 
 ### Forest — 森林采样（Forest Fire Sampling）
@@ -347,11 +347,11 @@ Forest 在指数分布下同样出现了 Precision 0.9 的精度损失，与 Ham
 | 数据集 | 3 个（含 Hamster 小网络） | 8 个（不含 Hamster） |
 | RWB 精度 epsilon | **0.1** | **0.01** |
 | Forest 采样数 | 4,000 | 4,000（一致） |
-| 硬件 | AMD Ryzen 7 8845H（8核笔记本, 28.5GB） | Intel Xeon Gold 6330（28核服务器, 1TB RAM） |
+| 硬件 | ****** | Intel Xeon Gold 6330（28核服务器, 1TB RAM） |
 
 > 关于 k 值：原论文测试 k 以 2 的幂递增（1,2,4,...,1024），本复现使用 k=10 以降低大规模网络实验时间。
 >
-> 关于分布类型：原论文使用 **Normal** 分布而非 **Power Law**，这是最大的差异之一。代码仓库内置的 `pow` 是复现者额外添加的分布，不在论文实验范围内。
+> 关于分布类型：原论文使用 **Normal** 分布而非 **Power Law**，这是最大的差异之一。代码仓库内置的 `pow` 是我额外添加的分布，不在论文实验范围内。
 >
 > 关于 RWB 精度：原论文使用 epsilon=0.01（更严格），我们使用 epsilon=0.1（更宽松）。epsilon 越小采样数越多（与 1/epsilon^2 成正比），意味着论文的 RWB 采样量是本文的 **100 倍**。
 
@@ -407,5 +407,7 @@ Forest 在指数分布下同样出现了 Precision 0.9 的精度损失，与 Ham
 目前已完成全部 Hamster 实验和全部 DBLP 实验（uni、exp、pow），剩余 Google 网络（87 万人，9 组实验）将在后续完成。
 
 ---
-
+谢谢观看喵，关注猫猫谢谢喵
+有问题都欢迎评论区留言，我会尽快回复。
+或者发邮箱给我，我会尽快回复。邮箱：neutrino843@qq.com
 **原论文链接：** [Opinion Maximization in Social Networks by Modifying Internal Opinions (arXiv:2510.17226)](https://arxiv.org/abs/2510.17226)
