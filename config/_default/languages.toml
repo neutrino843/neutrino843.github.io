@@ -1,7 +1,7 @@
 [zh-cn]
 languageName = "中文"
 weight = 1
-title = "neutrino的博客"
+title = "neutrino"
 
 [zh-cn.params]
 readingTime = true

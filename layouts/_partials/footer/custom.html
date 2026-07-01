@@ -109,7 +109,15 @@ document.addEventListener('DOMContentLoaded', function() {
     var check = setInterval(function() {
         if (typeof initPlayer === 'function') {
             clearInterval(check);
-            window.__player = initPlayer(window.__PLAYER_CONFIG__);
+            // Map config tracks to expected format: { name, artist, url }
+            var tracks = window.__PLAYER_CONFIG__.playlist.map(function(t) {
+                return {
+                    name: t.name,
+                    artist: t.artist,
+                    url: '/audio/' + encodeURIComponent(t.file)
+                };
+            });
+            window.__player = initPlayer(tracks);
         }
     }, 200);
     // Safety: stop checking after 10 seconds

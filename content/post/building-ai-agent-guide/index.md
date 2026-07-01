@@ -175,7 +175,7 @@ search_agent = Agent(
 
 ---
 
-##  Agent的运行与编排（Orchestration）
+## 六、 Agent的运行与编排（Orchestration）
 
 ### 单Agent系统（Single-Agent Systems）
 
@@ -314,4 +314,7 @@ Agent可以通过逐步添加工具来处理许多任务，保持复杂性可控
 4. **架构**：单Agent优先 → 复杂度超标时引入多Agent → 选择合适的编排模式
 5. **安全**：多层护栏（分类器、PII、审核、风险评级、规则防护、输出验证）→ 持续迭代
 
-Agent技术的落地才刚刚开始，希望本文能为你提供一点点初步的认识。
+希望本文能为你提供一点点初步的认识。
+
+感兴趣的读者想了解更详细的内容的话，以下是原文链接：
+https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
