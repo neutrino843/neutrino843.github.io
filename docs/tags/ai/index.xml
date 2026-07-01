@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on neutrino的博客</title><link>https://neutrino843.github.io/tags/ai/</link><description>Recent content in AI on neutrino的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 02 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/tags/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>构建生产级AI Agent：从原型到落地的完整实践指南</title><link>https://neutrino843.github.io/post/building-ai-agent-guide/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/building-ai-agent-guide/</guid><description>&lt;h2 id="引言"&gt;引言
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on neutrino</title><link>https://neutrino843.github.io/tags/ai/</link><description>Recent content in AI on neutrino</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 02 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/tags/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>构建生产级AI Agent：从原型到落地的完整实践指南</title><link>https://neutrino843.github.io/post/building-ai-agent-guide/</link><pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/building-ai-agent-guide/</guid><description>&lt;h2 id="引言"&gt;引言
 &lt;/h2&gt;&lt;p&gt;AI Agent（智能体）正在从实验性玩具走向生产环境。但构建一个真正可靠、安全、可维护的Agent系统，远比调用一次LLM API复杂得多。本文将基于阅读学习OpenAI: A practical guide to building agents内容的感悟，系统性地梳理从原型验证到生产部署全链路中的关键实践与常见陷阱。&lt;/p&gt;
 &lt;p&gt;一个Agent由三个核心部分组成：&lt;strong&gt;模型（Model）&lt;/strong&gt;、&lt;strong&gt;工具（Tools）&lt;/strong&gt;、&lt;strong&gt;指令（Instructions）&lt;/strong&gt;。三者协同工作，缺一不可。&lt;/p&gt;
 &lt;hr&gt;
@@ -222,7 +222,7 @@
 &lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;解决方案&lt;/strong&gt;：在例程中预设这些&amp;quot;边缘情况&amp;quot;，并给出替代步骤（例如：&amp;ldquo;如果缺少订单号，则引导用户去查找&amp;rdquo;）。&lt;/p&gt;
 &lt;hr&gt;
-&lt;h2 id="agent的运行与编排orchestration"&gt;Agent的运行与编排（Orchestration）
+&lt;h2 id="六-agent的运行与编排orchestration"&gt;六、 Agent的运行与编排（Orchestration）
 &lt;/h2&gt;&lt;h3 id="单agent系统single-agent-systems"&gt;单Agent系统（Single-Agent Systems）
 &lt;/h3&gt;&lt;p&gt;Agent可以通过逐步添加工具来处理许多任务，保持复杂性可控并简化评估和维护。每个新工具帮助Agent拓展新功能以满足你的需求，而不需要过早地引入多个Agent进行协调运作。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;核心优势&lt;/strong&gt;：简单可控，一个Agent就够了的时候不要引入多个。&lt;/p&gt;
@@ -385,4 +385,7 @@
 &lt;li&gt;&lt;strong&gt;架构&lt;/strong&gt;：单Agent优先 → 复杂度超标时引入多Agent → 选择合适的编排模式&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;安全&lt;/strong&gt;：多层护栏（分类器、PII、审核、风险评级、规则防护、输出验证）→ 持续迭代&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;Agent技术的落地才刚刚开始，希望本文能为你提供一点点初步的认识。&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;希望本文能为你提供一点点初步的认识。&lt;/p&gt;
+&lt;p&gt;感兴趣的读者想了解更详细的内容的话，以下是原文链接：
+&lt;a class="link" href="https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/" target="_blank" rel="noopener"
+ &gt;https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>
