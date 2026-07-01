@@ -10,34 +10,34 @@
 
 :root {
     --player-height: 64px;
-    --player-bg: rgba(255, 255, 255, 0.92);
-    --player-border: rgba(0, 0, 0, 0.08);
+    --player-bg: rgba(255, 255, 255, 0.55);
+    --player-border: rgba(0, 0, 0, 0.06);
     --player-text: #333;
-    --player-text-secondary: #888;
+    --player-text-secondary: #777;
     --player-accent: #1a73e8;
     --player-accent-hover: #1557b0;
-    --player-progress-bg: rgba(0, 0, 0, 0.08);
+    --player-progress-bg: rgba(0, 0, 0, 0.06);
     --player-progress-fill: #1a73e8;
-    --player-volume-bg: rgba(0, 0, 0, 0.08);
+    --player-volume-bg: rgba(0, 0, 0, 0.06);
     --player-volume-fill: #1a73e8;
     --player-btn-hover: rgba(0, 0, 0, 0.06);
-    --player-shadow: 0 -2px 16px rgba(0, 0, 0, 0.1);
+    --player-shadow: none;
     --player-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 [data-theme="dark"] {
-    --player-bg: rgba(30, 30, 30, 0.94);
-    --player-border: rgba(255, 255, 255, 0.08);
+    --player-bg: rgba(20, 20, 20, 0.55);
+    --player-border: rgba(255, 255, 255, 0.06);
     --player-text: #e0e0e0;
-    --player-text-secondary: #999;
+    --player-text-secondary: #aaa;
     --player-accent: #6ab0f3;
     --player-accent-hover: #8dc5f8;
-    --player-progress-bg: rgba(255, 255, 255, 0.12);
+    --player-progress-bg: rgba(255, 255, 255, 0.08);
     --player-progress-fill: #6ab0f3;
-    --player-volume-bg: rgba(255, 255, 255, 0.12);
+    --player-volume-bg: rgba(255, 255, 255, 0.08);
     --player-volume-fill: #6ab0f3;
-    --player-btn-hover: rgba(255, 255, 255, 0.1);
-    --player-shadow: 0 -2px 16px rgba(0, 0, 0, 0.4);
+    --player-btn-hover: rgba(255, 255, 255, 0.08);
+    --player-shadow: none;
 }
 
 // ─── Container ───────────────────────────────
