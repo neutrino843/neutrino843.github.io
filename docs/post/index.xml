@@ -313,7 +313,7 @@
  &lt;/tr&gt;
  &lt;tr&gt;
  &lt;td style="text-align: center"&gt;缺点&lt;/td&gt;
- &lt;td style="text-align: center"&gt;采样数公式 ceil(n*log(n)/epsilon^2) 在大网络上会算出天量采样&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;采样数公式 ceil(n*log(n)/epsilon^2) 在大网络上会算出超大量采样&lt;/td&gt;
  &lt;/tr&gt;
  &lt;tr&gt;
  &lt;td style="text-align: center"&gt;类比&lt;/td&gt;
@@ -664,7 +664,7 @@ NDCG 考虑的是排序质量——最优的人排在第 1 位了吗？&lt;/p&gt
  &lt;/tr&gt;
  &lt;tr&gt;
  &lt;td style="text-align: center"&gt;硬件&lt;/td&gt;
- &lt;td style="text-align: center"&gt;AMD Ryzen 7 8845H（8核笔记本, 28.5GB）&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;******&lt;/td&gt;
  &lt;td style="text-align: center"&gt;Intel Xeon Gold 6330（28核服务器, 1TB RAM）&lt;/td&gt;
  &lt;/tr&gt;
  &lt;/tbody&gt;
@@ -672,7 +672,7 @@ NDCG 考虑的是排序质量——最优的人排在第 1 位了吗？&lt;/p&gt
 
  &lt;blockquote&gt;
  &lt;p&gt;关于 k 值：原论文测试 k 以 2 的幂递增（1,2,4,&amp;hellip;,1024），本复现使用 k=10 以降低大规模网络实验时间。&lt;/p&gt;
-&lt;p&gt;关于分布类型：原论文使用 &lt;strong&gt;Normal&lt;/strong&gt; 分布而非 &lt;strong&gt;Power Law&lt;/strong&gt;，这是最大的差异之一。代码仓库内置的 &lt;code&gt;pow&lt;/code&gt; 是复现者额外添加的分布，不在论文实验范围内。&lt;/p&gt;
+&lt;p&gt;关于分布类型：原论文使用 &lt;strong&gt;Normal&lt;/strong&gt; 分布而非 &lt;strong&gt;Power Law&lt;/strong&gt;，这是最大的差异之一。代码仓库内置的 &lt;code&gt;pow&lt;/code&gt; 是我额外添加的分布，不在论文实验范围内。&lt;/p&gt;
 &lt;p&gt;关于 RWB 精度：原论文使用 epsilon=0.01（更严格），我们使用 epsilon=0.1（更宽松）。epsilon 越小采样数越多（与 1/epsilon^2 成正比），意味着论文的 RWB 采样量是本文的 &lt;strong&gt;100 倍&lt;/strong&gt;。&lt;/p&gt;
 
  &lt;/blockquote&gt;
@@ -793,7 +793,10 @@ NDCG 考虑的是排序质量——最优的人排在第 1 位了吗？&lt;/p&gt
 &lt;p&gt;我个人认为，这篇论文主要讲了如何在资源有限的情况下，找到社交网络中影响观点传播的关键节点的三种算法。&lt;/p&gt;
 &lt;p&gt;目前已完成全部 Hamster 实验和全部 DBLP 实验（uni、exp、pow），剩余 Google 网络（87 万人，9 组实验）将在后续完成。&lt;/p&gt;
 &lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;原论文链接：&lt;/strong&gt; &lt;a class="link" href="https://arxiv.org/abs/2510.17226" target="_blank" rel="noopener"
+&lt;p&gt;谢谢观看喵，关注猫猫谢谢喵
+有问题都欢迎评论区留言，我会尽快回复。
+或者发邮箱给我，我会尽快回复。邮箱：neutrino843@qq.com
+&lt;strong&gt;原论文链接：&lt;/strong&gt; &lt;a class="link" href="https://arxiv.org/abs/2510.17226" target="_blank" rel="noopener"
  &gt;Opinion Maximization in Social Networks by Modifying Internal Opinions (arXiv:2510.17226)&lt;/a&gt;&lt;/p&gt;</description></item><item><title>给Hugo Stack主题配置Giscus评论区</title><link>https://neutrino843.github.io/post/hugo-stack-giscus-comment/</link><pubDate>Tue, 09 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/hugo-stack-giscus-comment/</guid><description>&lt;h2 id="前言"&gt;前言
 &lt;/h2&gt;&lt;p&gt;之前博客没有评论区，看其他大佬的博客都有评论区，加上自己也想整活（bushi），就想自己也配置一个。最开始想到是利用 AI 帮忙写一个评论区，后面发现工作量有点大，调试太麻烦了，于是就一直搁置了。然后后面搜索相关的内容的时候看到了 Giscus 这个项目，发现很适合 Hugo 这个 Stack 主题进行一个评论区的搭建，一句话概括就是：&lt;strong&gt;用 GitHub Discussions 当数据库的评论区&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;而且上手很简单，不需要额外买服务器，不需要管数据库，访客用 GitHub 账号就能登录评论，所有数据都存在你自己仓库的 Discussions 里，完全可控。对咱们这种博客托管在 GitHub Pages 的开发者来说，简直就是天选方案。&lt;/p&gt;
