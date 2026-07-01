@@ -1,0 +1,871 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Julia on neutrino</title><link>https://neutrino843.github.io/tags/julia/</link><description>Recent content in Julia on neutrino</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 26 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/tags/julia/index.xml" rel="self" type="application/rss+xml"/><item><title>Opinion Maximization 论文复现笔记：在社交网络中寻找关键人物</title><link>https://neutrino843.github.io/post/opinion-maximization-reproduction/</link><pubDate>Fri, 26 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/opinion-maximization-reproduction/</guid><description>&lt;h2 id="前言"&gt;前言
+&lt;/h2&gt;&lt;p&gt;最近在做AI+社交媒体分析相关的研究，因为GPU性能问题，只能找找避免使用GPU的论文。在这个条件下寻找，然后发现一篇 NeurIPS 2025 的论文：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Opinion Maximization in Social Networks by Modifying Internal Opinions&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这篇论文是25年10月25投递的，研究后发现不需要使用GPU，纯使用CPU就能复现。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;简单讲一下，这个论文主要研究的是：在一个社交网络里，如果你只能说服 k 个人改变态度，选哪 k 个人能让整个网络的总支持度提升最大？对比传统算法下，关于如何高效这一寻找公众影响力大的节点的三种算法的优势创新与性能比对。&lt;/p&gt;
+&lt;p&gt;你可能会说：&amp;ldquo;欸，这还不简单，找大 V 嘛，不就是哪些公众人物嘛！&amp;rdquo; 但实际上要考虑三个因素喵：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;这个人本身的态度&lt;/strong&gt; — 本来就很支持的人，说服他没用（已经是满分了）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;这个人的影响力&lt;/strong&gt; — 大 V 说句话能影响几万人，普通人只能影响几个朋友&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;这个人的固执程度&lt;/strong&gt; — 有些人你说破嘴也没用（阻力大），有些人很容易被影响&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;基于上述因素，加上传统的矩阵求逆方法在处理大规模网络时存在计算上的局限性，这篇论文提出了两种基于抽样的算法。并且在随机游走模型的基础上，还开发了一种精确的异步更新算法。
+下面是我复现的过程与踩过的坑。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;本次复现选取 k=10 和 ε=0.1（原论文主要实验使用 k=64、ε=0.01），且额外测试了论文未涉及的 Power Law 分布。详细差异见文末对比说明。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="环境搭建"&gt;环境搭建
+&lt;/h2&gt;&lt;h3 id="安装-julia"&gt;安装 Julia
+&lt;/h3&gt;&lt;p&gt;论文代码是用 Julia 写的——一种号称性能接近 C 但写起来像 Python 的语言。
+（我也是第一次听说并认真了解了一下，孤陋寡闻了QAQ,贴一点Julia的介绍）&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Julia 是一种面向科学计算的高性能动态高级编程语言。它最初设计的目的是为了满足高性能数值分析和计算科学的需求。Julia 语言具有以下几个显著特点：
+&lt;strong&gt;高性能&lt;/strong&gt;：Julia 的性能接近于静态编译型语言，如 C 和 Fortran。这使得它在需要高计算性能的科学计算领域非常有优势。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;动态性&lt;/strong&gt;：Julia 是一种动态语言，具有类似于 Python 和 Ruby 的灵活性和易用性。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;并行计算和分布式计算&lt;/strong&gt;：Julia 为并行计算和分布式计算提供了良好的支持，能够充分利用多核处理器和集群计算资源。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;丰富的类型系统&lt;/strong&gt;：Julia 拥有丰富的类型系统，支持用户自定义类型，并且类型转换和提升机制非常优雅。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;开源和跨平台&lt;/strong&gt;：Julia 是开源的，采用 MIT 许可证，支持多种操作系统，包括 macOS、Windows、Linux 等。 ）&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;对 Julia 不熟悉的人，这里推荐安装 Julia 1.10.7 版本。&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;安装指引&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;从 &lt;a class="link" href="https://julialang.org/downloads/" target="_blank" rel="noopener"
+ &gt;Julia 官网&lt;/a&gt; 下载 Windows x64 Installer，安装时记得勾选 &amp;ldquo;Add Julia to PATH&amp;rdquo;。&lt;/p&gt;
+&lt;p&gt;接下来是验证安装：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;julia&lt;/span&gt; &lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;-version&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 输出：julia version 1.10.7&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+ &lt;/blockquote&gt;
+&lt;p&gt;（&lt;strong&gt;powershell的打开方式&lt;/strong&gt;：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;win+r 输入powershell 回车或者win+x打开powershell）&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="安装依赖"&gt;安装依赖
+&lt;/h3&gt;&lt;p&gt;Julia 的包管理比 Python 更加方便一些——按 &lt;code&gt;]&lt;/code&gt; 键进入包管理模式即可：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-julia" data-lang="julia"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 终端输入 julia 回车，然后按 ] 键&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 提示符会从 julia&amp;gt; 变成 pkg&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;pkg&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;DelimitedFiles&lt;/span&gt; &lt;span class="n"&gt;LinearAlgebra&lt;/span&gt; &lt;span class="n"&gt;SparseArrays&lt;/span&gt; &lt;span class="n"&gt;DataStructures&lt;/span&gt; &lt;span class="n"&gt;Random&lt;/span&gt; &lt;span class="n"&gt;Distributions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+ &lt;/blockquote&gt;
+&lt;h3 id="克隆代码"&gt;克隆代码
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;git&lt;/span&gt; &lt;span class="n"&gt;clone&lt;/span&gt; &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="p"&gt;//&lt;/span&gt;&lt;span class="n"&gt;github&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;ToneGY&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="n"&gt;OpinionMax_MIS&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;git&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd &lt;/span&gt;&lt;span class="n"&gt;OpinionMax_MIS&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="遇到的坑与修复"&gt;遇到的坑与修复
+&lt;/h2&gt;&lt;h3 id="坑-1缺少输出目录"&gt;坑 1：缺少输出目录
+&lt;/h3&gt;&lt;p&gt;第一次运行，兴冲冲地敲下命令：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;julia&lt;/span&gt; &lt;span class="n"&gt;ground_truth&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="py"&gt;jl&lt;/span&gt; &lt;span class="n"&gt;hamster&lt;/span&gt; &lt;span class="n"&gt;uni&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后迎面一个报错：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ERROR: SystemError: opening file &amp;#34;ground_truth/hamster_uni_f.txt&amp;#34;: No such file or directory
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;原因：&lt;/strong&gt; 代码要把结果写到 &lt;code&gt;ground_truth/&lt;/code&gt; 文件夹，但这个文件夹压根不存在。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;修复：&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-powershell" data-lang="powershell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;mkdir&lt;/span&gt; &lt;span class="n"&gt;ground_truth&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;这种&amp;quot;文件夹不存在&amp;quot;的报错在开源项目里其实很常见，因为作者通常假设你会手动建好目录结构。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="坑-2julia-版本兼容性"&gt;坑 2：Julia 版本兼容性
+&lt;/h3&gt;&lt;p&gt;跑 &lt;code&gt;pow&lt;/code&gt;（幂律分布）时又炸了：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-mysql" data-lang="mysql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;ERROR&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;MethodError&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Cannot&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="k"&gt;convert&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;an&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;object&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Float64&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;an&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;object&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Vector&lt;/span&gt;&lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="n"&gt;Float64&lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Stacktrace&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;load_graph&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="n"&gt;DataInfo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dist_s&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="n"&gt;Uniform&lt;/span&gt;&lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="n"&gt;Float64&lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dist_f&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="n"&gt;ScaledPowerLaw&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;原因：&lt;/strong&gt; 代码里的自定义分布类型继承了 &lt;code&gt;Distributions.jl&lt;/code&gt; 库的类型系统，新版 Julia 和 Distributions 之间出现了接口不兼容。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;修复过程分为两步：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;第一步，把类型定义中的继承关系去掉：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-julia" data-lang="julia"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="n"&gt;修改前&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="kt"&gt;PowerLaw&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;:&lt;/span&gt; &lt;span class="kt"&gt;Distribution&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="kt"&gt;Univariate&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="kt"&gt;Continuous&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="n"&gt;修改后&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="kt"&gt;PowerLaw&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;第二步，重写整个 &lt;code&gt;distribution.jl&lt;/code&gt;——因为 &lt;code&gt;generate_samples&lt;/code&gt; 函数内部也用了 &lt;code&gt;Distributions.jl&lt;/code&gt; 的采样器，干脆完全去掉对这个库的依赖，改用 Julia 内置的随机数生成器。最终文件从 70 行变成了 160 行，但胜在稳定。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;遇到版本兼容性问题时，&amp;ldquo;去掉外部依赖、自己实现&amp;quot;虽然工作量大了点，但一劳永逸。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="坑-3重复包含警告"&gt;坑 3：重复包含警告
+&lt;/h3&gt;&lt;p&gt;每次运行都看到一行黄字：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-zed" data-lang="zed"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;WARNING&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;redefinition&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;constant&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Main&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;RNG&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;原因：&lt;/strong&gt; &lt;code&gt;metrics.jl&lt;/code&gt; 又 include 了一次 &lt;code&gt;graph.jl&lt;/code&gt;，导致 &lt;code&gt;distribution.jl&lt;/code&gt; 被加载两次，里面的 &lt;code&gt;const RNG&lt;/code&gt; 被重复定义。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;修复：&lt;/strong&gt; 去掉 &lt;code&gt;metrics.jl&lt;/code&gt; 里的 &lt;code&gt;include(&amp;quot;graph.jl&amp;quot;)&lt;/code&gt;。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-julia" data-lang="julia"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="n"&gt;修改前&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;include&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;graph.jl&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;getPrecision&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;g&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="kt"&gt;Graph&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;true_value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;setK&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="n"&gt;修改后&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="n"&gt;graph&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;jl&lt;/span&gt; &lt;span class="n"&gt;已在&lt;/span&gt; &lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;jl&lt;/span&gt; &lt;span class="n"&gt;中引入，这里不再重复引入&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="n"&gt;getPrecision&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;g&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="kt"&gt;Graph&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;true_value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;setK&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="数据集"&gt;数据集
+&lt;/h2&gt;&lt;p&gt;官方代码内置了 3 个网络数据集：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;数据集&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;节点数&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;边数&lt;/th&gt;
+ &lt;th&gt;打个比方&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Hamsterster&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;2,426&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;16,630&lt;/td&gt;
+ &lt;td&gt;一个小公司全员群&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;DBLP&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;317,080&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1,049,866&lt;/td&gt;
+ &lt;td&gt;一个中型城市的居民&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Google&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;875,713&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;5,105,039&lt;/td&gt;
+ &lt;td&gt;一个大型社区&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;每个节点（人）会被随机分配两个属性：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;属性&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;符号&lt;/th&gt;
+ &lt;th&gt;含义&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;范围&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;内部意见&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;( s_i )&lt;/td&gt;
+ &lt;td&gt;对某个话题的支持程度&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;[0, 1]&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;阻力系数&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;( f_i )&lt;/td&gt;
+ &lt;td&gt;抵抗外部影响的程度&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;[0, 1]&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这两个属性有三种分布模式，分别模拟不同的社会场景：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;分布&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;参数名&lt;/th&gt;
+ &lt;th&gt;含义&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;Uniform&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;code&gt;uni&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;人群态度均匀分布，不极端也不温和&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;Exponential&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;code&gt;exp&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;大多数人温和，少数极端 —— &amp;ldquo;沉默的大多数&amp;rdquo;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;Power Law&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;code&gt;pow&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;极少数人非常固执或非常开放 —— &amp;ldquo;极端派&amp;rdquo;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这里论文实际上参考了观点动态模型，采用了 DeGroot以及 Friedkin 和 Johnsen所提出的观点形成模型&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;DeGroot 模型&lt;/strong&gt;：这是一个简单的观点动态模型，假设每个人在每次更新观点时，会根据其他人的观点和自己的阻抗系数，将自己的观点更新为一个加权平均值。只要社会网络是连通的，所有人的观点最终都会收敛到一个相同的共识值。这个最终共识是所有人初始观点的加权平均值。 &lt;strong&gt;简单来说就是每个人在形成观点时，会完全参考朋友们的意见，不会有任何的个人偏见。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;FJ 模型&lt;/strong&gt;是对 DeGroot 模型的直接推广和修正。它最大的特点是引入了“固执”或“偏见”的概念。
+运作机制：与 DeGroot 模型不同，FJ 模型中的每个人在每次更新观点时，不会完全抛弃自己的初始观点，而是会将自己的初始观点和朋友们观点的加权平均结合起来。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;“固执”参数&lt;/strong&gt;：模型通过一个参数（0到1之间）来控制每个人对自己初始观点的坚持程度。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;如果参数为0，模型就退化为标准的 DeGroot 模型。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ 
+ &lt;blockquote&gt;
+ &lt;p&gt;如果参数为1，则这个人完全固执，观点永远不会改变。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;最终结果：由于每个人都保留了一部分初始观点，整个群体的观点通常不会达成完全的一致（共识） 。最终，社会会呈现出多样化的观点分布，可能出现多峰（multimodal）或两极分化（polarized） 的状态， &lt;strong&gt;简单来说就是每个人在形成观点时，会参考朋友们的意见，但是也会保留一部分自己的初始观点。&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;DeGroot 模型下描绘了一个理想化的“舆论场”，所有人终将达成共识；而 Friedkin-Johnson 模型则更贴近现实，承认了人的“固执己见”，因此观点可能永远无法统一，社会将保持多元或对立。
+如果按数学严谨性排序：DeGroot ⊆ FJ（FJ 包含 DeGroot）喵&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;hr&gt;
+&lt;h2 id="三种算法"&gt;三种算法
+&lt;/h2&gt;&lt;h3 id="mis--最大影响选择maximal-influence-selection"&gt;MIS — 最大影响选择（Maximal Influence Selection）
+&lt;/h3&gt;&lt;p&gt;基于消息传递的精确算法。先算一遍全局影响力，筛选出候选人，再对边界候选人反复精算。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;优点：精度最高，理论上能找到最优解
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;缺点：网络越大计算开销越大
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;类比：像高考阅卷，先快速扫描一遍，对分数边界的学生反复核查
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+ &lt;/blockquote&gt;
+&lt;h3 id="rwb--随机游走采样random-walk-based"&gt;RWB — 随机游走采样（Random Walk Based）
+&lt;/h3&gt;&lt;p&gt;派出一批&amp;quot;小兵&amp;quot;在网络里随机溜达，统计谁被路过最多，谁就是关键人物。使用别名表（Alias Table）实现 O(1) 的采样效率。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;优点：实现简单，思路直观
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;缺点：采样数公式 ceil(n·log(n)/ε²) 在大网络上会算出天量采样
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;类比：像搞民意调查，随机抽一批人问&amp;#34;你信任谁&amp;#34;，被提到最多的就是意见领袖
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+ &lt;/blockquote&gt;
+&lt;h3 id="forest--森林采样forest-fire-sampling"&gt;Forest — 森林采样（Forest Fire Sampling）
+&lt;/h3&gt;&lt;p&gt;在每个节点&amp;quot;点火&amp;rdquo;，让火沿着网络蔓延。火被&amp;quot;熄灭&amp;quot;的地方就是影响力终点。使用路径压缩加速。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;优点：实现最简单
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;缺点：在不均匀分布的人群里精度下降
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;类比：像森林火灾模拟，火从哪里起不重要，关键是火灭在哪
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;遵纪守法好公民从我做起喵，不要去纵火喵&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="实验结果"&gt;实验结果
+&lt;/h2&gt;&lt;h3 id="hamster-小网络2426-人"&gt;Hamster 小网络（2,426 人）
+&lt;/h3&gt;&lt;p&gt;这个网络规模很小，适合做功能验证。&lt;/p&gt;
+&lt;h4 id="均匀分布uni-人群态度随机均匀"&gt;均匀分布（uni）— 人群态度随机均匀
+&lt;/h4&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;算法&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;耗时&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;Precision&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;NDCG&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;总效果分&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;MIS&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.49s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1224.36&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;RWB&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;0.11s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.9998&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1224.36&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Forest&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.45s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.9997&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1224.36&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;三种算法都能满分找到关键人物。RWB 以 0.11 秒拿下速度冠军。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Precision&lt;/strong&gt; 指的是：你选的 k 个人里，有多少个是真正最优的？1.0 = 全部正确。
+&lt;strong&gt;NDCG&lt;/strong&gt; 考虑的是排序质量——最优的人排在第 1 位了吗？&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="指数分布exp-大多数人温和少数极端"&gt;指数分布（exp）— 大多数人温和，少数极端
+&lt;/h4&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;算法&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;耗时&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;Precision&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;NDCG&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;总效果分&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;MIS&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.47s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1298.75&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;RWB&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.25s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.9999&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1298.75&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Forest&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.49s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;0.9000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.9943&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1298.14&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Forest 的 Precision 掉到了 0.9——10 个里选错了一个。&lt;/p&gt;
+&lt;h4 id="幂律分布pow-极少数人特别固执或特别开放"&gt;幂律分布（pow）— 极少数人特别固执或特别开放
+&lt;/h4&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;算法&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;耗时&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;Precision&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;NDCG&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;总效果分&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;MIS&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.51s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1396.34&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;RWB&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;2.24s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1396.34&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Forest&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1.33s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;0.9000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.9962&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;1394.38&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;一个有趣的现象：RWB 在幂律分布下耗时暴涨到 2.24 秒（均匀分布只要 0.11 秒，差了 20 倍）。可能是因为幂律分布下少数节点连接极多，别名表的采样策略需要更多时间来收敛。&lt;/p&gt;
+&lt;p&gt;另一个值得注意的点：&lt;strong&gt;人群分布越极端，总效果分越高&lt;/strong&gt;（从 1224 → 1299 → 1396）。幂律分布下有些人特别容易被说服（固执度极低），找到这些人后收益更大。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="dblp-中网络317080-人"&gt;DBLP 中网络（317,080 人）
+&lt;/h3&gt;&lt;h4 id="均匀分布uni"&gt;均匀分布（uni）
+&lt;/h4&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;算法&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;耗时&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;Precision&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;NDCG&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;总效果分&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;MIS&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;0.77s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;158,375&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Forest&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;71.64s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;158,376&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;RWB&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;72.03s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.9996&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;158,375&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;注意喵，这里出现了一个&lt;strong&gt;反直觉的结果&lt;/strong&gt;——&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;MIS 在 31 万人的网络上只用了 0.77 秒，反而比 RWB 和 Forest 快了将近 100 倍。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;原因在于 RWB 的采样数公式 n * log(n) / ε²在 31 万人的网络上算出了 &lt;strong&gt;4 亿次&lt;/strong&gt;随机游走采样，自然慢；而 Forest 也需要生成 31 万个随机生成树，每棵树都要遍历整张图。&lt;/p&gt;
+&lt;p&gt;所以&amp;quot;近似算法比精确算法快&amp;quot;这个直觉并不总是对的——得看具体算法和网络规模。&lt;/p&gt;
+&lt;h4 id="指数分布exp"&gt;指数分布（exp）
+&lt;/h4&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;算法&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;耗时&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;Precision&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;NDCG&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;总效果分&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;MIS&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;2.89s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;158,674&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Forest&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;103.70s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;0.9000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.9979&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;158,673&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;RWB&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;377.16s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;158,674&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;RWB 在指数分布下耗时暴涨到了 377 秒（6 分多钟），因为采样数计算依赖 (\varepsilon^2)，同样的 (\varepsilon=0.1) 在不同分布下生成的随机游走数量不同。不过精度非常完美。&lt;/p&gt;
+&lt;p&gt;Forest 在指数分布下同样出现了 Precision 0.9 的精度损失，与 Hamster 小网络上的表现一致——说明 Forest 在不均匀分布下精度下降是一个&lt;strong&gt;系统性问题&lt;/strong&gt;，跟网络规模无关。&lt;/p&gt;
+&lt;h4 id="幂律分布pow"&gt;幂律分布（pow）
+&lt;/h4&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;算法&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;耗时&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;Precision&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;NDCG&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;总效果分&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;MIS&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;25.09s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.0000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;158,949&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;RWB&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;2062.38s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;0.9000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.9999&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;158,949&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Forest&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;145.69s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;0.6000&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.8587&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;158,908&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;幂律分布下的结果是最具洞察力的：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;MIS&lt;/strong&gt; 保持在 1.0 精度，但耗时从均匀分布的 0.77 秒暴涨到 25 秒。原因是幂律分布中少数节点连接数极高（类似社交平台的大 V），MIS 的 push-based 算法在超级节点上需要处理更多的传播路径。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;RWB&lt;/strong&gt; 耗时 2062 秒（34 分钟！），是整组实验中最慢的，精度还掉到了 0.9。幂律分布的极端结构让随机游走难以收敛。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Forest&lt;/strong&gt; 直接崩溃——精度只有 &lt;strong&gt;0.6&lt;/strong&gt;。在极度不均衡的人群中，Forest Fire 采样策略严重失效，10 个关键人物只正确识别了 6 个。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;这个结果传达了一个清晰的信号：&lt;strong&gt;如果社交网络中节点属性服从幂律分布（这是真实世界最常见的情况），MIS 是唯一可靠的选择。&lt;/strong&gt;&lt;/p&gt;
+&lt;!-- TODO: Google 网络（87万人）的实验结果待补充 --&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;后续可能会补充：Google 网络（875,713 节点）的全部实验结果喵，因为时间问题，这里还没有进行实验&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="初步分析"&gt;初步分析
+&lt;/h2&gt;&lt;h3 id="算法选择策略"&gt;算法选择策略
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;小网络（&amp;lt; 1 万人）：RWB ≥ MIS &amp;gt; Forest
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; → RWB 速度最快，精度足够，是最优选择
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;大网络（&amp;gt; 10 万人）：MIS &amp;gt;&amp;gt;&amp;gt; Forest &amp;gt; RWB 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; → MIS 在所有分布下都保持最高精度，速度也最快，是唯一普适的选择
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; → Forest 和 RWB 在非均匀分布下精度和速度都会显著下降
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="三个有趣的发现"&gt;三个有趣的发现
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;人群分布对算法影响极大&lt;/strong&gt; — Forest 在幂律分布下 Precision 掉到 0.6（几乎随机猜测），MIS 则在所有分布下都保持 1.0。人群分布越不均衡，MIS 的优势越大。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;MIS 在大规模网络上反而快&lt;/strong&gt; — 在 DBLP（31 万人）上 MIS 仅用 0.77-25 秒，比 RWB 和 Forest 快数个数量级。MIS 的 push-based 算法具有优秀的扩展性，但幂律分布下耗时增加 30 倍值得注意。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;RWB 的采样策略存在严重瓶颈&lt;/strong&gt; — 在幂律分布下 RWB 耗时 2062 秒（34 分钟），精度还掉到 0.9。采样数公式 (\lceil n \log n / \varepsilon^2 \rceil) 在大规模非均匀网络上会算出天量采样，实际可行性存疑。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="本实验与原论文实验差异说明"&gt;本实验与原论文实验差异说明
+&lt;/h2&gt;&lt;h3 id="参数差异"&gt;参数差异
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;项目&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;本实验&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;原论文&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;k 值&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;k=10&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;k∈{1,2,4,8,16,32,&lt;strong&gt;64&lt;/strong&gt;,128,&amp;hellip;,1024}&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;分布类型&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Uniform / &lt;strong&gt;Exponential&lt;/strong&gt; / &lt;strong&gt;Power Law&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Uniform / &lt;strong&gt;Normal&lt;/strong&gt; / &lt;strong&gt;Exponential&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;数据集&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;3 个（含 Hamster 小网络）&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;8 个（不含 Hamster）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;RWB 精度 ε&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;0.1&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;10⁻²（0.01）&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Forest 采样数&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;4,000&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;4,000（一致）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;硬件&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;AMD Ryzen 7 8845H（8核笔记本, 28.5GB）&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Intel Xeon Gold 6330（28核服务器, 1TB RAM）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;关于 k 值&lt;/strong&gt;：原论文测试 k ∈ {1,2,4,&amp;hellip;,1024}（2 的幂），本复现使用 k=10 以降低大规模网络实验时间。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关于分布类型&lt;/strong&gt;：原论文使用 &lt;strong&gt;Normal&lt;/strong&gt; 分布而非 &lt;strong&gt;Power Law&lt;/strong&gt;，这是最大的差异之一。代码仓库内置的 &lt;code&gt;pow&lt;/code&gt; 是复现者额外添加的分布，不在论文实验范围内。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关于 RWB 精度&lt;/strong&gt;：原论文使用 ε=0.01（更严格），我们使用 ε=0.1（更宽松）。ε 越小采样数越多（与 1/ε² 成正比），意味着论文的 RWB 采样量是本文的 &lt;strong&gt;100 倍&lt;/strong&gt;。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="运行时间对比dblp-网络"&gt;运行时间对比（DBLP 网络）
+&lt;/h3&gt;&lt;p&gt;论文 Table 2 提供了 k=64 时的运行时间，与我们的 k=10 实验结果对比如下：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;分布&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;算法&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;论文时间 (k=64)&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;本实验 (k=10)&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;分析&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Uniform&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;MIS&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;0.28s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;0.77s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;论文服务器更强，且 k 值对 MIS 影响小&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Uniform&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Forest&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;66.02s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;71.64s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;几乎一致&lt;/strong&gt;，Forest 耗时与 k 无关&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Uniform&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;RWB&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;120.61s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;72.03s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;论文 ε=0.01，采样量是本文 100 倍&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Exponential&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;MIS&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;1.81s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;2.89s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;量级一致，差异来自硬件&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Exponential&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Forest&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;104.41s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;103.70s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;几乎完全一致&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Exponential&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;RWB&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;&lt;strong&gt;703.31s&lt;/strong&gt;&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;377.16s&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;论文 ε=0.01 导致采样量更大&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这里我们可以发现：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Forest 耗时与 k 值无关&lt;/strong&gt;，论文 k=64 和本文 k=10 的结果几乎完全一致&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;MIS 在论文服务器上更快&lt;/strong&gt;（0.28s vs 0.77s），符合服务器与笔记本的性能差距QAQ&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;RWB 的时间差异主要来自 ε 参数&lt;/strong&gt;（0.01 vs 0.1），而非 k 值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="精度对比说明"&gt;精度对比说明
+&lt;/h3&gt;&lt;p&gt;论文的 Precision/NDCG 结果以折线图形式呈现（Figure 1 &amp;amp; 2），而非数值表格，因此无法提取每个 k 值的精确数值。但从图中可以确认：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;MIS 算法&lt;/strong&gt;在所有数据集和分布上 Precision 和 NDCG 均为 1.0（与本文&lt;strong&gt;完全一致&lt;/strong&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;FOREST 算法&lt;/strong&gt;精度接近但略低于 MIS（与本文趋势&lt;strong&gt;一致&lt;/strong&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;RWB 算法&lt;/strong&gt;精度同样接近 1.0（与本文&lt;strong&gt;一致&lt;/strong&gt;）&lt;/li&gt;
+&lt;li&gt;三种算法的相对排名完全一致：MIS &amp;gt; RWB &amp;gt; FOREST&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="与论文数据偏差总结"&gt;与论文数据偏差总结
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;评估维度&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;结论&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;MIS 精度&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;完全一致（均为 1.0）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;算法排名趋势&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;完全一致（MIS &amp;gt; RWB &amp;gt; Forest）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Forest 运行时间&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;高度一致（DBLP 上误差 &amp;lt; 10%）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;MIS 运行时间&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;本实验较慢（硬件差异 + k 值差异）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;RWB 运行时间&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;这里因为 ε 参数不同，导致 RWB 运行时间出现差异&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Power Law 分布&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;论文未测试，属于猫额外测试的实验&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;总结&lt;/strong&gt;：本复现在核心结论上与论文高度一致，MIS 在所有场景下保持最优精度和速度。差异主要来自硬件配置、k 值选择和 RWB 精度参数。Power Law 分布的实验是本文的额外贡献，论文并未测试该分布。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="尾巴"&gt;尾巴
+&lt;/h2&gt;&lt;p&gt;这次复现踩了几个坑——文件夹缺失、版本兼容、重复包含——但整体来说论文代码的质量很不错：结构清晰，注释完整，跑通后能稳定复现论文的核心结论。
+建议去看看原论文，了解更多的实验细节和理论基础，总体来说会学到蛮多 new things，
+我个人的看法是，这篇论文主要讲了如何 &amp;ldquo;在资源有限的情况下，找到社交网络中影响观点传播的关键节点“的三种算法，原论文链接放在文末了。&lt;/p&gt;
+&lt;p&gt;目前已完成全部 Hamster 实验和全部 DBLP 实验（uni ✅、exp ✅、pow ✅），剩余 Google 网络（87 万人，9 组实验）将在后续完成。&lt;/p&gt;
+&lt;hr&gt;
+&lt;div align="center"&gt;
+&lt;p&gt;谢谢观看喵，关注猫猫谢谢喵 🐱&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://arxiv.org/abs/2510.17226" target="_blank" rel="noopener"
+ &gt;原论文链接：\[2510.17226\] Opinion Maximization in Social Networks by Modifying Internal Opinions&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;</description></item></channel></rss>
