@@ -3,7 +3,7 @@ title: "构建生产级AI Agent：从原型到落地的完整实践指南"
 description: "系统梳理AI Agent构建过程中的模型选型、工具编排、多智能体架构、安全护栏等关键环节，提供从零到一的可操作指南--基于OpenAI: A practical guide to building agents编写"
 date: 2026-06-02
 tags: ["AI", "Agent", "LLM", "架构设计"]
-categories: ["技术"]
+categories: ["阿喵不懂ai"]
 draft: false
 ---
 

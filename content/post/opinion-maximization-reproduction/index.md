@@ -3,7 +3,7 @@ title: "Opinion Maximization 论文复现笔记：在社交网络中寻找关键
 description: "复现 NeurIPS 2025 论文 Opinion Maximization in Social Networks by Modifying Internal Opinions 的全过程记录"
 date: 2026-06-26
 tags: ["NeurIPS 2025", "社交网络分析", "影响力最大化", "Julia"]
-categories: ["论文复现"]
+categories: ["项目复现"]
 draft: false
 ---
 

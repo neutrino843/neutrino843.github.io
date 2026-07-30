@@ -3,7 +3,7 @@ title: "给Hugo Stack主题配置Giscus评论区"
 description: "不用数据库、不用服务器、GitHub Discussions 做后台的评论系统，手把手教你配置"
 date: 2026-06-09
 tags: ["Hugo", "Stack", "Giscus", "教程"]
-categories: ["技术"]
+categories: ["博客搭建教程"]
 draft: false
 ---
 
