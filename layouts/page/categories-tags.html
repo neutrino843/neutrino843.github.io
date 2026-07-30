@@ -1,0 +1,141 @@
+{{ define "body-class" }}template-categories-tags{{ end }}
+
+{{ define "main" }}
+<style>
+.template-categories-tags .page-header {
+    margin-bottom: 2rem;
+}
+.template-categories-tags .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+.template-categories-tags .section-title svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+.categories-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+.category-card {
+    background: var(--card-background);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.category-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.category-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    background: var(--category-bg);
+    color: var(--category-color) !important;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+.category-link:hover {
+    opacity: 0.9;
+}
+.category-count {
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+.category-description {
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    color: var(--body-text-color);
+    opacity: 0.75;
+}
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+.tag-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.2rem;
+    padding: 0.35rem 0.85rem;
+    background: var(--card-background);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: var(--body-text-color) !important;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.tag-item:hover {
+    background: var(--accent-color);
+    color: #fff !important;
+    border-color: var(--accent-color);
+}
+.tag-count {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+.tag-item:hover .tag-count {
+    opacity: 1;
+}
+</style>
+
+<div class="categories-tags-page">
+    <header class="page-header">
+        <h1 class="page-title">{{ .Title }}</h1>
+        {{ with .Description }}
+            <p class="page-description">{{ . }}</p>
+        {{ end }}
+    </header>
+
+    <section class="categories-section">
+        <h2 class="section-title">
+            {{ partial "helper/icon" "categories" }}
+            {{ T "widget.categoriesCloud.title" }}
+        </h2>
+        <div class="categories-list">
+            {{ range .Site.Taxonomies.categories.ByCount }}
+                <div class="category-card">
+                    {{ $color := partial "helper/color-from-str" .Page.LinkTitle }}
+                    <a href="{{ .Page.RelPermalink }}" class="category-link" 
+                       style="--category-bg: {{ $color.BackgroundColor }}; --category-color: {{ $color.TextColor }};">
+                        <span class="category-name">{{ .Page.Title }}</span>
+                        <span class="category-count">{{ .Count }}</span>
+                    </a>
+                    {{ with .Page.Description }}
+                        <p class="category-description">{{ . }}</p>
+                    {{ end }}
+                </div>
+            {{ end }}
+        </div>
+    </section>
+
+    <section class="tags-section">
+        <h2 class="section-title">
+            {{ partial "helper/icon" "tag" }}
+            {{ T "widget.tagCloud.title" }}
+        </h2>
+        <div class="tags-list">
+            {{ range .Site.Taxonomies.tags.ByCount }}
+                <a href="{{ .Page.RelPermalink }}" class="tag-item">
+                    <span class="tag-name">{{ .Page.Title }}</span>
+                    <sup class="tag-count">{{ .Count }}</sup>
+                </a>
+            {{ end }}
+        </div>
+    </section>
+</div>
+
+{{ partialCached "footer/footer" . }}
+{{ end }}
