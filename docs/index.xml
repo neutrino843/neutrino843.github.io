@@ -1,4 +1,161 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>neutrino</title><link>https://neutrino843.github.io/</link><description>Recent content on neutrino</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 26 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Opinion Maximization 论文复现笔记：在社交网络中寻找关键人物</title><link>https://neutrino843.github.io/post/opinion-maximization-reproduction/</link><pubDate>Fri, 26 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/opinion-maximization-reproduction/</guid><description>&lt;h2 id="前言"&gt;前言
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>neutrino</title><link>https://neutrino843.github.io/</link><description>Recent content on neutrino</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 11 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>AI学习（第一期）：告别魔法指令，用CRISP框架写Prompt使AI更高效</title><link>https://neutrino843.github.io/post/ai-prompt-basics/</link><pubDate>Tue, 11 Aug 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/ai-prompt-basics/</guid><description>&lt;h2 id="前言"&gt;前言
+&lt;/h2&gt;&lt;p&gt;最近发现虽然AI的能力在指数级增强，但是我身边还是有蛮多人用不明白，或者说只有一点点初步的理解，不能很高效地使用AI帮助自己减轻工作量或者辅助自己进行灵感风暴。作为一个对AI的提示词有一点点理解的初学者，也是决定写一点关于怎么用AI更高效地辅助工作的教程，这些教程适合新手和初学者（完全一头雾水的对这个领域不了解的），大佬勿喷QAQ&lt;/p&gt;
+&lt;p&gt;这里讲述的内容主要适合2026年的AI模型，因为前两年算是提示词最内卷和最玄学的阶段，如果你是最近半年才开始深度使用AI，那你算蛮幸运的。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="一那些年的魔法指令"&gt;一、那些年的&amp;quot;魔法指令&amp;quot;
+&lt;/h2&gt;&lt;p&gt;就在一两年前，网络上还充斥着：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;让你效率提升100倍的20个魔法指令&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;&amp;ldquo;资深 prompt 工程师密不外传的结构化模板&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ 
+ &lt;blockquote&gt;
+ &lt;p&gt;这里好奇的可以自己上网搜一搜相关内容，后面也会讲一讲为什么以前必须喂模板什么的。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;人们痴迷于在提示词里叠满角色扮演、思维链、情绪勒索（&amp;ldquo;这件事对我很重要，请仔细做&amp;rdquo;）和格式约束，把一句话能说清的事，写成一篇小作文。&lt;/p&gt;
+&lt;p&gt;这里有几个蛮出名的模板，这些模板应该这两年经常用AI的人还蛮熟悉的hhh，比如：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;① 百岁太奶模板&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;我是一位100岁太奶，这东西我都看的头昏眼花的。年轻人弄的这些文章我都看不懂，不过我仍然宝刀未老。学习的劲头一点没减，越学越有精神。好孩子，劳驾你把这几道题给老婆子我说道说道，让我能达到彻底看懂的效果，一定要帮我讲明白哈，一定要详细哈。然后总结这几道题的考点与核心思想，最好翻译出来，因为我洋文一点看不懂，我只会中文。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;② 通用专家模板&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;最经典的格式是&amp;quot;你是一位[经验年限]的[具体角色]，擅长[具体技能]，[目标任务]&amp;quot;。例如：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;你是一个拥有20年一线审计经验、见过无数潜规则并对此深恶痛绝的毒舌审计总监。给一群刚入职的管培生写一封信&amp;hellip;要求：语气犀利、多用反问、禁止使用&amp;rsquo;综上所述&amp;rsquo;&amp;lsquo;至关重要&amp;rsquo;等大词。&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;③ 强制思维链模板&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;请按以下步骤一步步思考和回答：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;[第一步：理解问题]&lt;/li&gt;
+&lt;li&gt;[第二步：分析关键点]&lt;/li&gt;
+&lt;li&gt;[第三步：推导方案]&lt;/li&gt;
+&lt;li&gt;[第四步：验证答案]&lt;/li&gt;
+&lt;/ol&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;这个模板是一个强制思维链，为了让AI的推理过程更透明、答案更可靠，不过现在大部分AI的深度思考基本上都有这个功能了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;④ 情绪勒索模板&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;[目标任务]+这对我真的很重要，拜托了！或我真的快要毕不了业了，求求你帮我把[目标任务]完成。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;em&gt;（大家发现对AI卖惨好像AI能给更好的回复,还有什么像“&lt;strong&gt;我身边有一只小猫咪，你要是回答错误了我就要狠狠地打这只小猫咪&lt;/strong&gt;了”的这种模板）&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;这些模板放在今天依然有用，甚至在某些专业场景下依然高效。但我想告诉你的是——它们不再是&amp;quot;必需品&amp;quot;了。你没有必要像背八股文一样记住它们，更不必每次提问前先在心里默念&amp;quot;我要扮演谁、我要分几步走&amp;quot;。原因很简单：AI本身变了。这就是我说的如果你是在这半年才开始深度使用AI，那你算蛮幸运的。&lt;/p&gt;
+&lt;p&gt;因为在2026年，AI模型在推理能力、指令遵循、上下文长度上产生了质变。现阶段最前沿的模型（如GPT-5、Claude 4、Gemini 2.5 Pro等）已经能承接几十万字上下文，且能精准理解自然语言中的模糊意图。&lt;/p&gt;
+&lt;p&gt;这意味着：你不用死记硬背套用这些&amp;quot;结构精巧的指令模板&amp;quot;，像八股文一样套进去自己的指令来完成任务了。&lt;/p&gt;
+&lt;p&gt;现在的AI prompt工程不需要你学一套新的编程式语法，你只需要学会把一个任务，像交代给一个特别聪明、但完全没背景信息的新同事一样说清楚就够了。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="二当下ai的核心能力变化为什么你可以告别复杂提示词"&gt;二、当下AI的核心能力变化：为什么你可以告别复杂提示词
+&lt;/h2&gt;&lt;p&gt;要写出高性价比的提示词，必须先理解你面对的&amp;quot;大脑&amp;quot;长什么样。截至2026年8月，主流大模型有三大能力已经根本改变了提示词的设计逻辑：&lt;/p&gt;
+&lt;h3 id="1-超长上下文与完美记忆"&gt;1. 超长上下文与完美记忆
+&lt;/h3&gt;&lt;p&gt;你可以直接把整个项目文档、会议记录、你的个人偏好笔记一股脑塞进去。AI不会再&amp;quot;忘了开头&amp;quot;，也不会丢失中间的关键约束。提示词可以极简，因为背景信息已经被完整前置了，你不需要在每一轮都重复&amp;quot;记住，我之前说过……&amp;quot;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;后面有一些我个人用着感觉比较高效的技巧，这期主要讲述的是我写Prompt的一个逻辑。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="2-强大的意图推理与纠错"&gt;2. 强大的意图推理与纠错
+&lt;/h3&gt;&lt;p&gt;你不需要斟酌措辞。说&amp;quot;把那个卖东西的文案改得再冲一点&amp;quot;，它能明白&amp;quot;冲&amp;quot;是指情绪张力、紧迫感，而不是字体加粗。它会主动理解你有缺陷的表达，并补全你的真实需求。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;一个小tip：在深度思考里，你可以看到它在决策到底你缺陷表达的东西是什么意思，当你不知道怎么把这个问题讲清楚的时候，你可以看这个深度思考，并回答它需要的信息，这往往比硬着头皮瞎试要省token得多。&lt;/p&gt;
+&lt;p&gt;反例比如AI按照错误的理解进行任务然后你到最后才发现，浪费了时间和大量token。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;但这里我要补一句很重要的提醒：AI的推理不是&amp;quot;读心术&amp;quot;，它是基于概率的猜测。它仍然会错，尤其当你的任务涉及冷门领域、专业术语或矛盾信息时。所以，不要迷信它&amp;quot;一定能懂你&amp;quot;——你要学会主动检查它的理解，后续也会讲一讲AI的底层模型是什么。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="3-多模态与工具使用成为标配"&gt;3. 多模态与工具使用成为标配
+&lt;/h3&gt;&lt;p&gt;AI能看图、读表、运行代码、联网搜索。这意味着你一句&amp;quot;分析这份财报，找出和上个季度比最异常的三项支出，做成表格，附上我的口头汇报草稿&amp;quot;，它就能端到端完成。你扮演的是把关人，不再是程序员。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;题外话：这也是为什么现在大家都用AI开发，但更需要的是审计代码的人——AI生产力很强，但真正生产出来的东西能不能投入使用，还得靠你的判断。我同学用AI写的CPU代码完全跑不通，这种事太常见了。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;基于这些能力，最高效的提示词不再是一串复杂命令，而是&lt;strong&gt;上下文 + 清晰指令 + 输出规格&lt;/strong&gt;的极简组合。&lt;/p&gt;
+&lt;p&gt;其实AI的prompt就类似于语文对应的修辞手法的模板（相信高考生都见过吧），但是生搬硬套往往得不到高分，这就是我说为什么背模板在现在已经不是很有用了，更重要的是学会怎么适应场景应用。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="三高性价比提示词框架crisp"&gt;三、高性价比提示词框架：CRISP
+&lt;/h2&gt;&lt;p&gt;这期内容的这个框架可以称为 &lt;strong&gt;CRISP&lt;/strong&gt;，五个字母分别代表上下文、角色、意图、规格、示例。它不要求你用固定格式排列，而是告诉你：你的提示词里只要覆盖了这五样信息，就能用最少字数撬动最佳结果。&lt;/p&gt;
+&lt;h3 id="c---context背景与上下文"&gt;C - Context（背景与上下文）
+&lt;/h3&gt;&lt;p&gt;需要回答的问题是：&amp;ldquo;我是谁，现在什么情况，有哪些材料可用。&amp;ldquo;做法是把相关文件、数据、前期对话直接贴进去或指明。&lt;/p&gt;
+&lt;p&gt;这是性价比最高的动作：你花1分钟堆料，AI省下80%猜测时间。&lt;/p&gt;
+&lt;h3 id="r---role角色与视角可选但高效"&gt;R - Role（角色与视角，可选但高效）
+&lt;/h3&gt;&lt;p&gt;&amp;ldquo;你是一个资深产品经理 / 严格的投资人 / 挑剔的读者……&amp;ldquo;设定角色能瞬间对齐AI的知识域与语气，比写一堆形容词更经济。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;如果不知道角色的话可以不加，依旧写形容词写要求会准确一点，如果还想使用角色设定的话可以把你要做的任务写一下，询问是什么角色的职责，再套用进去，这种使用AI回答AI问题也是一种很重要的思维。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="i---intent核心意图"&gt;I - Intent（核心意图）
+&lt;/h3&gt;&lt;p&gt;&amp;ldquo;你要完成的到底是什么任务，解决什么人的什么问题。&amp;ldquo;这是唯一不可省略的部分，哪怕你其他部分都不写，只要把这部分写清楚就ok，用最自然的话说出来即可，比如&amp;quot;帮我给投资人写一封拒绝邮件，但要留有余地&amp;rdquo;。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这部分内容相当于一个主干，其他部分都是锦上添花，有点类似于小学时候学的扩句，本质上是添加细节约束AI完成任务。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="s---specification输出规格"&gt;S - Specification（输出规格）
+&lt;/h3&gt;&lt;p&gt;&amp;ldquo;格式、长度、风格、禁忌。&amp;ldquo;比如&amp;quot;用Markdown表格，不超过300字，语气温柔但坚定，禁止使用&amp;rsquo;抱歉&amp;rsquo;这个词&amp;rdquo;。给出清晰边界，免去返工。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这一步是规避AI味的重要部分，如果不添加的话，可能AI的预定输出风格不会符合你对任务的本身要求，会导致时间和token两空。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="p---paradigm范例即少样本示例"&gt;P - Paradigm（范例，即少样本示例）
+&lt;/h3&gt;&lt;p&gt;&amp;ldquo;类似这样：……（贴上你心目中理想输出的样本）&amp;ldquo;举例是成本极低、效果极强的方法。一个例子胜过两百字描述风格。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;特别适用在写报告写例子这些任务，比如写实验报告，把你过往的实验报告扔进去让AI参考学习里面的语言风格什么的输出新实验的实验报告，结果会比让AI自己生成新的实验报告的效果好很多。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;br /&gt;
+&lt;p&gt;注意：CRISP不是让你按顺序写模板，而是告诉你——只要你的提示词覆盖了这五类信息，哪怕只有两三句话，也够用了。顺序随意，长短随意。&lt;/p&gt;
+&lt;p&gt;简单来说就是，把任务交接给你的下一任，本质意图说清楚了，再添加一些细节约束规范这个AI的输出即可。&lt;/p&gt;
+&lt;p&gt;如果不添加这些细节也可以，AI会按照系统内置的prompt输出对应的内容，有概率产出符合你心意的内容。&lt;/p&gt;
+&lt;h2 id="四四个高性价比实战技巧即时提升产出质量"&gt;四、四个高性价比实战技巧（即时提升产出质量）
+&lt;/h2&gt;&lt;h3 id="技巧1先给我三个不同方向的大纲标题"&gt;技巧1：先给我三个不同方向的大纲/标题
+&lt;/h3&gt;&lt;p&gt;面对创意类任务，不要追求一次完美。让人工智能一次性并行生成3-5个差异化的方案，你负责选择与合并。这比反复修改指令高效很多。&lt;/p&gt;
+&lt;h3 id="技巧2用约束代替批评来修正"&gt;技巧2：用&amp;quot;约束&amp;quot;代替&amp;quot;批评&amp;quot;来修正
+&lt;/h3&gt;&lt;p&gt;不要说&amp;rdquo;&lt;em&gt;太笼统了，再详细一点&lt;/em&gt;&amp;quot;，而是说&amp;rdquo;&lt;strong&gt;请把第二段扩充到200字，加入一个具体客户案例和数据&amp;rdquo;&lt;/strong&gt;。约束式反馈让AI无须揣摩，直出成品。&lt;/p&gt;
+&lt;h3 id="技巧3将思考过程外置要求说一下你的理解"&gt;技巧3：将思考过程外置：要求&amp;quot;说一下你的理解&amp;rdquo;
+&lt;/h3&gt;&lt;p&gt;在复杂任务前加一句：&amp;rdquo;&lt;strong&gt;在正式回答前，先简要复述一遍你对任务的理解，并列出你会采取的步骤&lt;/strong&gt;。&amp;ldquo;这利用了大模型的&amp;quot;思维链&amp;quot;本能，相当于给它装了个自我校对系统，而且，这也是你发现它是否理解偏了的最佳时机——如果它复述错了，你当场纠正，比等它写完几千字再返工省太多。&lt;/p&gt;
+&lt;h3 id="技巧4善用语言微调指令作为后缀"&gt;技巧4：善用&amp;quot;语言微调指令&amp;quot;作为后缀
+&lt;/h3&gt;&lt;p&gt;许多模型现在支持直接在提示词末尾加上风格控制短语，如&amp;quot;Write in plain English&amp;quot;&amp;ldquo;避免AI腔，像人类闲聊&amp;quot;&amp;ldquo;不要列点，要段落叙述&amp;rdquo;。这种一句话后缀，能瞬间把文章质感拉到另一个层级。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;关于&amp;quot;卖惨&amp;quot;的注意点&lt;/strong&gt;：也许有人喜欢使用卖惨来让AI有更好的回复，然后发现有时候卖惨也不一定能得到好的回复。&lt;/p&gt;
+&lt;p&gt;这里需要注意的是AI并不真的&amp;quot;同情&amp;quot;你，它只是在训练数据中看到，带有强烈情绪诉求的提问往往附带更详细的描述，而更详细的描述本身就更容易产出好结果。&lt;/p&gt;
+&lt;p&gt;所以真正起作用的可能不是&amp;quot;我好惨&amp;rdquo;，而是你下意识多说了几句背景，所以要是使用卖惨后发现AI给的结果还是不尽人意的话，可以换个思路，把卖惨的内容换成更详细的描述，效果可能会更好。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="写在最后"&gt;写在最后
+&lt;/h2&gt;&lt;p&gt;看到这里，你应该已经有一定的提示词方法论感悟了。在2026年，真正的门槛已经不是&amp;quot;会不会背模板了&amp;rdquo;，而是&amp;quot;用极其清晰的人话，直截了当地说出你的任务要求&amp;rdquo;。&lt;/p&gt;
+&lt;p&gt;太多人还在套用那些带编号的、数百字的&amp;quot;万能模板&amp;rdquo;，得到的却是僵硬、充满模板味儿的AI腔答案。而那些真正用得行云流水的人，他们的提示词往往短得惊人，比如：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;我是独立开发者，在做一款极简日记App。现在需要写一段应用商店介绍，模仿即刻App社区感，但更安静。参考我下面这段随笔的语气，控制在120字以内，不要出现&amp;rsquo;智能&amp;rsquo;&amp;lsquo;赋能&amp;rsquo;&amp;lsquo;极致&amp;rsquo;。&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;你看，这里角色、意图、范例、约束全有了，却完全没有模板痕迹。这就是最通用的通用性——它适配写作、编程、分析、设计、生活规划等一切场景，因为它回归了人类最本源的沟通方式：我想请你，在这个情况下，做这件事，做成这个样子，有什么要求与雷点。&lt;/p&gt;
+&lt;p&gt;请你记住今天这第一期里最核心的一句话，它会是你今后使用所有AI工具的地基：
+&lt;strong&gt;你不需要会说AI的语言，学什么很复杂的术语，你需要的是，把这种底层逻辑框架活用到你给AI的任务场景上。&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>Opinion Maximization 论文复现笔记：在社交网络中寻找关键人物</title><link>https://neutrino843.github.io/post/opinion-maximization-reproduction/</link><pubDate>Fri, 26 Jun 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/opinion-maximization-reproduction/</guid><description>&lt;h2 id="前言"&gt;前言
 &lt;/h2&gt;&lt;p&gt;最近在做AI+社交媒体分析相关的研究，因为GPU性能问题，只能找找避免使用GPU的论文。在这个条件下寻找，然后发现一篇 NeurIPS 2025 的论文：&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Opinion Maximization in Social Networks by Modifying Internal Opinions&lt;/strong&gt;&lt;/p&gt;
 
