@@ -12,11 +12,7 @@
  &lt;/blockquote&gt;
 
  &lt;blockquote&gt;
- 
- &lt;blockquote&gt;
  &lt;p&gt;这里好奇的可以自己上网搜一搜相关内容，后面也会讲一讲为什么以前必须喂模板什么的。&lt;/p&gt;
-
- &lt;/blockquote&gt;
 
  &lt;/blockquote&gt;
 &lt;p&gt;人们痴迷于在提示词里叠满角色扮演、思维链、情绪勒索（&amp;ldquo;这件事对我很重要，请仔细做&amp;rdquo;）和格式约束，把一句话能说清的事，写成一篇小作文。&lt;/p&gt;
@@ -53,7 +49,7 @@
  &lt;p&gt;[目标任务]+这对我真的很重要，拜托了！或我真的快要毕不了业了，求求你帮我把[目标任务]完成。&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;&lt;em&gt;（大家发现对AI卖惨好像AI能给更好的回复,还有什么像“&lt;strong&gt;我身边有一只小猫咪，你要是回答错误了我就要狠狠地打这只小猫咪&lt;/strong&gt;了”的这种模板）&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;（大家发现对AI卖惨好像AI能给更好的回复，还有像&amp;quot;我身边有一只小猫咪，你要是回答错误了我就要狠狠地打这只小猫咪了&amp;quot;的这种模板）&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;这些模板放在今天依然有用，甚至在某些专业场景下依然高效。但我想告诉你的是——它们不再是&amp;quot;必需品&amp;quot;了。你没有必要像背八股文一样记住它们，更不必每次提问前先在心里默念&amp;quot;我要扮演谁、我要分几步走&amp;quot;。原因很简单：AI本身变了。这就是我说的如果你是在这半年才开始深度使用AI，那你算蛮幸运的。&lt;/p&gt;
 &lt;p&gt;因为在2026年，AI模型在推理能力、指令遵循、上下文长度上产生了质变。现阶段最前沿的模型（如GPT-5、Claude 4、Gemini 2.5 Pro等）已经能承接几十万字上下文，且能精准理解自然语言中的模糊意图。&lt;/p&gt;
 &lt;p&gt;这意味着：你不用死记硬背套用这些&amp;quot;结构精巧的指令模板&amp;quot;，像八股文一样套进去自己的指令来完成任务了。&lt;/p&gt;
@@ -132,9 +128,9 @@
 &lt;/h2&gt;&lt;h3 id="技巧1先给我三个不同方向的大纲标题"&gt;技巧1：先给我三个不同方向的大纲/标题
 &lt;/h3&gt;&lt;p&gt;面对创意类任务，不要追求一次完美。让人工智能一次性并行生成3-5个差异化的方案，你负责选择与合并。这比反复修改指令高效很多。&lt;/p&gt;
 &lt;h3 id="技巧2用约束代替批评来修正"&gt;技巧2：用&amp;quot;约束&amp;quot;代替&amp;quot;批评&amp;quot;来修正
-&lt;/h3&gt;&lt;p&gt;不要说&amp;rdquo;&lt;em&gt;太笼统了，再详细一点&lt;/em&gt;&amp;quot;，而是说&amp;rdquo;&lt;strong&gt;请把第二段扩充到200字，加入一个具体客户案例和数据&amp;rdquo;&lt;/strong&gt;。约束式反馈让AI无须揣摩，直出成品。&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;不要说&amp;rdquo;&lt;em&gt;太笼统了，再详细一点&lt;/em&gt;&amp;quot;，而是说&amp;rdquo;&lt;strong&gt;请把第二段扩充到200字，加入一个具体客户案例和数据&lt;/strong&gt;&amp;quot;。约束式反馈让AI无须揣摩，直出成品。&lt;/p&gt;
 &lt;h3 id="技巧3将思考过程外置要求说一下你的理解"&gt;技巧3：将思考过程外置：要求&amp;quot;说一下你的理解&amp;rdquo;
-&lt;/h3&gt;&lt;p&gt;在复杂任务前加一句：&amp;rdquo;&lt;strong&gt;在正式回答前，先简要复述一遍你对任务的理解，并列出你会采取的步骤&lt;/strong&gt;。&amp;ldquo;这利用了大模型的&amp;quot;思维链&amp;quot;本能，相当于给它装了个自我校对系统，而且，这也是你发现它是否理解偏了的最佳时机——如果它复述错了，你当场纠正，比等它写完几千字再返工省太多。&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;在复杂任务前加一句：&amp;rdquo;&lt;strong&gt;在正式回答前，先简要复述一遍你对任务的理解，并列出你会采取的步骤。&lt;/strong&gt;&amp;ldquo;这利用了大模型的&amp;quot;思维链&amp;quot;本能，相当于给它装了个自我校对系统，而且，这也是你发现它是否理解偏了的最佳时机——如果它复述错了，你当场纠正，比等它写完几千字再返工省太多。&lt;/p&gt;
 &lt;h3 id="技巧4善用语言微调指令作为后缀"&gt;技巧4：善用&amp;quot;语言微调指令&amp;quot;作为后缀
 &lt;/h3&gt;&lt;p&gt;许多模型现在支持直接在提示词末尾加上风格控制短语，如&amp;quot;Write in plain English&amp;quot;&amp;ldquo;避免AI腔，像人类闲聊&amp;quot;&amp;ldquo;不要列点，要段落叙述&amp;rdquo;。这种一句话后缀，能瞬间把文章质感拉到另一个层级。&lt;/p&gt;
 
