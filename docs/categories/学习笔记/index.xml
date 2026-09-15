@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>学习笔记 on neutrino</title><link>https://neutrino843.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link><description>Recent content in 学习笔记 on neutrino</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 15 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml"/><item><title>eNSP「错误代码 40」问题全解析：从入门排查到疑难根治</title><link>https://neutrino843.github.io/post/ensp-error-code-40/</link><pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/ensp-error-code-40/</guid><description>&lt;h2 id="一开篇引言"&gt;一、开篇引言
+&lt;/h2&gt;&lt;p&gt;eNSP（Enterprise Network Simulation Platform，华为企业网络仿真平台）是学习华为路由交换、备考 HCIA/HCIP 的必备工具。它能在电脑上&amp;quot;虚拟&amp;quot;出一台台路由器、交换机，让你不用花几千块买真机就能敲命令、组拓扑、做实验。&lt;/p&gt;
+&lt;p&gt;但很多人在双击设备图标、准备启动路由器的那一刻，会突然弹出一个让人崩溃的窗口：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;错误代码：40　启动设备失败&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;br /&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;拓扑画好了、命令背熟了，设备却起不来，实验直接卡死。这个错误在 Windows 10/11 上是 eNSP 的&amp;quot;高发故障&amp;quot;之一，尤其多见于新电脑、装过其他虚拟化软件、或系统更新之后。&lt;/p&gt;
+&lt;p&gt;这篇博客从零基础讲起，先帮你认识问题，再给你一套&amp;quot;由浅入深&amp;quot;的排查路线。这里还有一个真实疑难案例——那种网上教程全试遍都解决不了的场景，本文会完整还原它的排查与根治全过程。（折磨了我好几天！！！我恨它）&lt;/p&gt;
+&lt;br /&gt;
+&lt;hr&gt;
+&lt;h2 id="二错误代码-40-基础认知"&gt;二、错误代码 40 基础认知
+&lt;/h2&gt;&lt;h3 id="21-它到底是什么意思"&gt;2.1 它到底是什么意思？
+&lt;/h3&gt;&lt;p&gt;先说人话：eNSP 本身不模拟设备，它靠一个叫 VirtualBox 的虚拟机软件在后台偷偷&amp;quot;开虚拟机&amp;quot;。&lt;/p&gt;
+&lt;p&gt;你看到的&amp;quot;路由器&amp;quot;，本质上是 VirtualBox 里的一台微型 Linux 虚拟机。所谓&amp;quot;错误代码 40&amp;quot;，翻译过来就是：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;eNSP 让 VirtualBox 去启动设备，但虚拟机没能成功开机。&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;所以这个错误的本质，不是 eNSP 坏了，而是它背后的 VirtualBox 开不了机。&lt;/p&gt;
+&lt;h3 id="22-为什么会开不了机"&gt;2.2 为什么会开不了机？
+&lt;/h3&gt;&lt;p&gt;虚拟机开不了机，常见就那么几类原因：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;网络配置不对&lt;/strong&gt; —— 虚拟网卡缺失、损坏、名字对不上&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;后台服务没起来&lt;/strong&gt; —— VirtualBox 的&amp;quot;服务员&amp;quot;罢工了&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;端口被占用&lt;/strong&gt; —— 有人占了 eNSP 要用的通道&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;被杀毒软件/防火墙拦了&lt;/strong&gt; —— 安全软件把 VirtualBox 当病毒&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;软件装坏了&lt;/strong&gt; —— eNSP 或 VirtualBox 文件损坏、版本不匹配&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;系统虚拟化被占用&lt;/strong&gt; —— Hyper-V、WSL2 等抢走了虚拟机的&amp;quot;硬件加速&amp;quot;（进阶场景）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;记住这句话：&lt;em&gt;&lt;strong&gt;错误代码 40 = 虚拟机没开起来 = 去查 VirtualBox 为什么开不了机。&lt;/strong&gt;&lt;/em&gt; &lt;em&gt;后面所有排查都围绕它展开。&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="三经典通用解决方案按顺序排查覆盖-90-场景"&gt;三、经典通用解决方案（按顺序排查，覆盖 90% 场景）
+&lt;/h2&gt;&lt;p&gt;建议严格从场景 1 到场景 5 依次尝试，每试一个就回 eNSP 验证一次，解决就停，别贪多。每一步做完都要&amp;quot;验证&amp;quot;，不要图快一次性全改。&lt;/p&gt;
+&lt;h3 id="场景-1virtualbox-虚拟机网络配置异常"&gt;场景 1：VirtualBox 虚拟机网络配置异常
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;适用场景&lt;/strong&gt;：eNSP 能打开、能画拓扑，但一点启动就报错 40；或者之前能用、某天突然不能用。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第一步：找到并检查&amp;quot;虚拟网卡&amp;quot;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;eNSP 的设备之间、设备和电脑之间，靠一块特殊的&amp;quot;虚拟网卡&amp;quot;通信。它名字里带 &amp;ldquo;VirtualBox Host-Only&amp;rdquo;，这是它区别于你真实网卡（Wi-Fi、以太网）的关键特征。&lt;/p&gt;
+&lt;p&gt;操作路径：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;按 &lt;code&gt;Win + R&lt;/code&gt;，输入 &lt;code&gt;ncpa.cpl&lt;/code&gt;，回车，打开网络连接窗口。&lt;/li&gt;
+&lt;li&gt;找名字里含 &lt;code&gt;VirtualBox Host-Only Ethernet Adapter&lt;/code&gt; 的网卡。
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;易错点&lt;/strong&gt;：不要动你的真实网卡（&amp;ldquo;WLAN&amp;quot;&amp;ldquo;以太网&amp;quot;&amp;ldquo;Realtek&amp;quot;等），只关注 VirtualBox 开头的。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;看它的状态：
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;如果图标是灰色或显示&amp;quot;已禁用&amp;quot;&amp;ldquo;网络电缆被拔出&amp;rdquo; → 右键 → 启用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果根本找不到这块网卡 → 说明 VirtualBox 网卡没装上，跳到本场景&amp;quot;重置虚拟网络&amp;rdquo;。&lt;/p&gt;
+&lt;br /&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;第二步：检查 IP 配置&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;右键这块 VirtualBox Host-Only 网卡 → 属性。&lt;/li&gt;
+&lt;li&gt;双击 &lt;strong&gt;Internet 协议版本 4 (TCP/IPv4)&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;正常情况下，它应该是：
+&lt;ul&gt;
+&lt;li&gt;IP 地址：&lt;code&gt;192.168.56.1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;子网掩码：&lt;code&gt;255.255.255.0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;网关、DNS 留空即可&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;如果显示&amp;quot;自动获得 IP&amp;quot;或地址不对，手动填上面的值，确定保存。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;br /&gt;
+&lt;p&gt;&lt;strong&gt;第三步：重置虚拟网络（网卡异常时的重装）&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如果网卡状态异常且无法通过启用/改 IP 解决：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;打开 VirtualBox 主程序（开始菜单搜 VirtualBox）。&lt;/li&gt;
+&lt;li&gt;顶部菜单 &lt;strong&gt;管理 → 主机网络管理器&lt;/strong&gt;（英文版 File → Host Network Manager）。&lt;/li&gt;
+&lt;li&gt;如果里面没有 VirtualBox Host-Only 网卡，点 &lt;strong&gt;创建&lt;/strong&gt; 新建一个。&lt;/li&gt;
+&lt;li&gt;选中网卡，设置 IPv4 地址 &lt;code&gt;192.168.56.1&lt;/code&gt;、掩码 &lt;code&gt;255.255.255.0&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;若网卡损坏，先 &lt;strong&gt;移除&lt;/strong&gt;，再 &lt;strong&gt;创建&lt;/strong&gt; 一块新的。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;br /&gt;
+&lt;p&gt;&lt;strong&gt;验证方法&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;回 eNSP 拖一台路由器，右键 &lt;strong&gt;启动&lt;/strong&gt;，看是否还弹&amp;quot;错误代码 40&amp;rdquo;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;还不行？&lt;/strong&gt; 进入场景 2。&lt;/p&gt;
+&lt;h3 id="场景-2ensp-核心服务未正常启动"&gt;场景 2：eNSP 核心服务未正常启动
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;适用场景&lt;/strong&gt;：网卡正常，但设备依旧起不来；或电脑重启后 eNSP 失效。&lt;/p&gt;
+&lt;p&gt;eNSP 依赖 VirtualBox 的后台服务。服务没起，等于&amp;quot;收银员不在岗，客人来了没人接待&amp;rdquo;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;操作步骤&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;按 &lt;code&gt;Win + R&lt;/code&gt;，输入 &lt;code&gt;services.msc&lt;/code&gt;，回车，打开 &lt;strong&gt;服务管理器&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;在列表里找到这些服务（按名称排序更好找）：
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;VirtualBox Service&lt;/strong&gt;（关键）&lt;/li&gt;
+&lt;li&gt;其他带 VirtualBox 字样的服务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;逐个检查：
+&lt;ul&gt;
+&lt;li&gt;右键 → &lt;strong&gt;启动&lt;/strong&gt;（如果没在运行）。&lt;/li&gt;
+&lt;li&gt;已经运行的，右键 → &lt;strong&gt;重新启动&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;设置开机自启：右键每个服务 → 属性 → &amp;ldquo;启动类型&amp;quot;选 &lt;strong&gt;自动&lt;/strong&gt; → 确定。
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;易错点&lt;/strong&gt;：有些服务&amp;quot;启动类型&amp;quot;是&amp;quot;手动&amp;rdquo;，导致每次重启电脑都要手动开。改成&amp;quot;自动&amp;quot;能省很多事。
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;验证方法&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;服务启动后，回 eNSP 启动设备测试。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;还不行？&lt;/strong&gt; 进入场景 3。&lt;/p&gt;
+&lt;h3 id="场景-3端口占用冲突"&gt;场景 3：端口占用冲突
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;适用场景&lt;/strong&gt;：eNSP 提示连接失败、或设备启动一半就卡住；之前装过别的网络模拟软件（如 GNS3、Packet Tracer）。&lt;/p&gt;
+&lt;p&gt;eNSP 要和 VirtualBox 通信，需要用特定端口。如果被别的程序占了，就会&amp;quot;信号串线&amp;quot;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第一步：查询端口占用&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;按 &lt;code&gt;Win + R&lt;/code&gt;，输入 &lt;code&gt;cmd&lt;/code&gt;，回车打开命令行，粘贴以下命令（可直接复制）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cmd" data-lang="cmd"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;netstat -ano &lt;span class="p"&gt;|&lt;/span&gt; findstr 65510
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;说明：65510 是 eNSP 常用的通信端口。如果命令没输出，说明这个端口没被占；如果有输出，记下最后一列的数字（PID，进程号）。&lt;/p&gt;
+&lt;br /&gt;
+&lt;p&gt;&lt;strong&gt;第二步：结束占用进程&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;假设上一步查到的 PID 是 1234，继续输入（把 1234 换成你实际查到的数字）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cmd" data-lang="cmd"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;taskkill /PID 1234 /F
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;易错点&lt;/strong&gt;：&lt;code&gt;/F&lt;/code&gt; 是强制结束，别漏；PID 必须换成你自己查到的那个，别照抄 1234。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;第三步：重启 eNSP 验证&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;完全退出 eNSP（右下角托盘图标也退出），重新打开，再启动设备。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;还不行？&lt;/strong&gt; 进入场景 4。&lt;/p&gt;
+&lt;h3 id="场景-4防火墙--安全软件拦截"&gt;场景 4：防火墙 / 安全软件拦截
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;适用场景&lt;/strong&gt;：新装的电脑、第一次用 eNSP；或装了 360、火绒、腾讯管家等第三方杀毒后出问题。&lt;/p&gt;
+&lt;p&gt;杀毒软件常把 VirtualBox 的底层驱动当成可疑程序拦截，导致虚拟机开不了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第一步：给 Windows 防火墙放行&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;按 &lt;code&gt;Win + R&lt;/code&gt;，输入 &lt;code&gt;wf.msc&lt;/code&gt;，回车，打开高级安全 Windows 防火墙。&lt;/li&gt;
+&lt;li&gt;左侧点 &lt;strong&gt;入站规则&lt;/strong&gt;，右侧点 &lt;strong&gt;新建规则&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;规则类型选 &lt;strong&gt;程序&lt;/strong&gt; → 下一步。&lt;/li&gt;
+&lt;li&gt;点 &lt;strong&gt;浏览&lt;/strong&gt;，找到 eNSP 安装目录，把目录下这些程序逐个添加放行（常见的如主程序、&lt;code&gt;VBoxManage.exe&lt;/code&gt;、&lt;code&gt;VBoxSVC.exe&lt;/code&gt; 等，目录下 &lt;code&gt;.exe&lt;/code&gt; 结尾的都加上最保险）。&lt;/li&gt;
+&lt;li&gt;每加一个都选 &lt;strong&gt;允许连接&lt;/strong&gt; → 下一步 → 给规则起个名字 → 完成。&lt;/li&gt;
+&lt;li&gt;出站规则同样操作一遍。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;br /&gt;
+&lt;p&gt;&lt;strong&gt;第二步：临时关闭第三方杀毒测试&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;右键任务栏右下角的杀毒软件图标（火绒/360/管家等）→ 退出/关闭防护（临时关闭即可，测完记得开）。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;易错点&lt;/strong&gt;：Windows 自带的&amp;quot;病毒和威胁防护&amp;quot;如果开着实时保护，也可以先临时关闭测试，确认是它拦截后再决定是否添加排除项。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;验证方法&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;关闭后回 eNSP 启动设备。如果成功，说明是安全软件的问题，后续把 eNSP 整个目录加入杀毒&amp;quot;信任区/白名单&amp;quot;即可长期使用。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;还不行？&lt;/strong&gt; 进入场景 5。&lt;/p&gt;
+&lt;h3 id="场景-5ensp-软件本身损坏--彻底重装"&gt;场景 5：eNSP 软件本身损坏 —— 彻底重装
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;适用场景&lt;/strong&gt;：以上全试过都不行；eNSP 反复崩溃、文件丢失；装的时候提示过错误。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第一步：干净卸载&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;打开 &lt;strong&gt;控制面板 → 程序和功能&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;找到 eNSP、VirtualBox（如果有）、WinPcap/Npcap（网络抓包组件），按顺序逐个卸载。&lt;/li&gt;
+&lt;li&gt;卸载后，手动删除残留目录：原安装目录下的 eNSP、VirtualBox 文件夹（如果还在）。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;br /&gt;
+&lt;p&gt;&lt;strong&gt;第二步：清理注册表冗余（可选但推荐）&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ 注册表操作有风险，严格按步骤来，删错可能影响系统。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Win + R&lt;/code&gt; 输入 &lt;code&gt;regedit&lt;/code&gt;，回车打开注册表编辑器。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Ctrl + F&lt;/code&gt; 搜索 VirtualBox 和 eNSP，找到相关的项后删除（&lt;code&gt;F3&lt;/code&gt; 继续搜索下一个，直到搜完）。&lt;/li&gt;
+&lt;li&gt;也可以先用专门的清理工具（如 CCleaner）扫描清理，更安全。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;第三步：重新安装（关键顺序）&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;先关闭所有杀毒软件（含 Windows 实时保护）。&lt;/li&gt;
+&lt;li&gt;去华为官方或学校提供的正规渠道下载与你的系统版本匹配的 eNSP 安装包（Win10/Win11 有区别，务必看清）。&lt;/li&gt;
+&lt;li&gt;安装前先装依赖组件：通常是 &lt;strong&gt;WinPcap/Npcap → VirtualBox → 最后 eNSP 主程序&lt;/strong&gt;。
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;易错点&lt;/strong&gt;：顺序不能乱，很多失败就是顺序装错了。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;每个安装包都 &lt;strong&gt;右键 → 以管理员身份运行&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;全部装完后重启电脑再打开 eNSP。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="四特殊场景疑难案例网上教程全试遍也没用"&gt;四、特殊场景疑难案例：网上教程全试遍也没用
+&lt;/h2&gt;&lt;p&gt;如果你把上面 5 个场景全走完，设备还是报 40，那恭喜你，你遇到的可能和我一样，是&lt;strong&gt;&amp;ldquo;叠 buff&amp;quot;型疑难杂症&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id="41-这个案例为什么特殊"&gt;4.1 这个案例为什么特殊？
+&lt;/h3&gt;&lt;p&gt;我试完所有场景后，发现我的电脑遇到的问题不是单一原因，而是&lt;strong&gt;三层问题叠加&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;残留了新版 VirtualBox 的驱动，和 eNSP 自带的旧版 VirtualBox 冲突；（这是我先前使用过新版 VirtualBox后卸载不干净造成的）&lt;/li&gt;
+&lt;li&gt;系统开了 Hyper-V（很多人装 WSL2 或 Docker 时开启的），抢走了虚拟机的硬件加速；&lt;/li&gt;
+&lt;li&gt;系统里有多块 Host-Only 虚拟网卡，eNSP 引用的是其中一块&amp;quot;已损坏的幽灵网卡&amp;rdquo;。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;它和通用场景的核心差异在于：通用教程默认&amp;quot;网卡缺了就建、服务停了就开&amp;quot;，但不会告诉你&amp;quot;系统里可能藏着两个版本的驱动在打架&amp;quot;，也不会告诉你要去看 VirtualBox 的硬化日志来定位签名冲突。这就是为什么常规方案全部失效。&lt;/p&gt;
+&lt;h3 id="42-我是怎么一步步定位到根因的"&gt;4.2 我是怎么一步步定位到根因的
+&lt;/h3&gt;&lt;p&gt;下面还原完整排查路径，重点是&amp;quot;怎么想的&amp;quot;，而不只是&amp;quot;做了什么&amp;quot;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第 1 步：确认错误来自 VirtualBox 而非 eNSP&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;我打开 eNSP 的日志目录（通常在 &lt;code&gt;安装目录\eNSP\vboxserver\log\&lt;/code&gt;），找到一条关键日志：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;has terminated unexpectedly during startup with exit code 1
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这确认了：虚拟机启动时&amp;quot;意外退出&amp;quot;，退出码 1。方向锁定在 VirtualBox 底层。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第 2 步：看 VirtualBox 的&amp;quot;硬化日志&amp;quot;，找到真正报错码&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;VirtualBox 每台虚拟机都有个日志目录，里面有 &lt;code&gt;VBoxHardening.log&lt;/code&gt;（硬化检查日志）。打开它，搜到了一个决定性错误码：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;VERR_SUP_VP_NOT_SIGNED_WITH_BUILD_CERT (-5657)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;br /&gt;
+&lt;p&gt;通俗解释：VirtualBox 有套&amp;quot;防篡改&amp;quot;机制，要求它的所有组件必须由同一个官方证书签名。如果系统里混入了另一个版本 VirtualBox 的驱动，新旧组件对不上号，它就会拒绝启动。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第 3 步：定位&amp;quot;内鬼&amp;quot;—— 一个残留的 7.x 驱动&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;在管理员命令行里查驱动：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cmd" data-lang="cmd"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sc query VBoxSup
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;结果发现 &lt;code&gt;VBoxSup&lt;/code&gt; 这个驱动正在运行，而且它的版本是 7.x（BETA），而 eNSP 用的是 5.2.x。两者证书不匹配，正是签名冲突的元凶。&lt;/p&gt;
+&lt;br /&gt;
+&lt;p&gt;&lt;strong&gt;判断逻辑&lt;/strong&gt;：&lt;code&gt;sc query&lt;/code&gt; 能查到服务且状态是 RUNNING，说明这个残留驱动&amp;quot;活在&amp;quot;系统里；版本号对不上 eNSP 的 VirtualBox 版本，就是冲突源。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第 4 步：发现第二个坑 —— Hyper-V 抢了硬件加速&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;进一步检查发现系统的 &lt;code&gt;HypervisorPresent&lt;/code&gt; 为 True，且装了 WSL2/Docker。这意味着硬件虚拟化被 Hyper-V 占用，旧版 VirtualBox 用不上。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;判断逻辑&lt;/strong&gt;：旧版 VirtualBox（5.x）和 Hyper-V 不能共存。只要 Hyper-V 开着，即使驱动修好，虚拟机还是可能报 &lt;code&gt;VERR_VMX_NO_VMX&lt;/code&gt;（没有 VT-x 可用）。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第 5 步：发现第三个坑 —— 网卡名字对不上&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;前两个问题修好后，设备启动时报了一个全新的错误：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Interface &amp;#39;VirtualBox Host-Only Ethernet Adapter&amp;#39; is not a Host-Only Adapter interface
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这时我才意识到：系统里有两块 Host-Only 网卡，eNSP 引用的那块已经损坏（状态 Down、MAC 全 0），导致我一直启动失败，而真正能用的是另一块带 &lt;code&gt;#2&lt;/code&gt; 后缀的网卡。&lt;/p&gt;
+&lt;br /&gt;
+&lt;p&gt;&lt;strong&gt;判断逻辑&lt;/strong&gt;：用 &lt;code&gt;VBoxManage list hostonlyifs&lt;/code&gt; 列出所有网卡，对比&amp;quot;eNSP 引用的名字&amp;quot;和&amp;quot;实际健康网卡的名字&amp;quot;，发现两者对不上。&lt;/p&gt;
+&lt;h3 id="43-完整解决步骤小白可照做"&gt;4.3 完整解决步骤（小白可照做）
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;适用范围声明&lt;/strong&gt;：以下步骤只针对&amp;quot;确认存在新版 VirtualBox 残留驱动 + 开启 Hyper-V + 网卡名不匹配&amp;quot;的叠加场景。不要在没有确认问题的情况下盲目执行，尤其是改系统启动项的操作。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;步骤 1：删除残留的 7.x 驱动&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;以管理员身份打开命令行（开始菜单搜 &lt;code&gt;cmd&lt;/code&gt;，右键&amp;quot;以管理员身份运行&amp;quot;），依次执行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cmd" data-lang="cmd"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sc stop VBoxSup
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sc delete VBoxSup
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;执行 &lt;code&gt;sc query VBoxSup&lt;/code&gt;，若提示&amp;quot;指定的服务未安装&amp;quot;，说明删除成功。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;步骤 2：关闭 Hyper-V（会临时影响 WSL2/Docker，可恢复）&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cmd" data-lang="cmd"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;bcdedit /set hypervisorlaunchtype off
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后重启电脑。重启后验证：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cmd" data-lang="cmd"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;systeminfo
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;在输出里找&amp;quot;基于虚拟化的安全性&amp;quot;或 Hyper-V 相关项，确认已关闭。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;重要提醒&lt;/strong&gt;：执行此步后，WSL2 和 Docker Desktop 会暂时无法使用。需要恢复时执行 &lt;code&gt;bcdedit /set hypervisorlaunchtype auto&lt;/code&gt; 再重启即可。这是可逆的，不要慌。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;步骤 3：修复网卡名不匹配&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;方案 A（推荐，改配置引用）&lt;/strong&gt;：让 eNSP 的基础镜像引用正确的网卡名。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;先查健康网卡的准确名字：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cmd" data-lang="cmd"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;VBoxManage list hostonlyifs
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol&gt;
+&lt;li&gt;记下状态为 Up、有正常 IP 的那块网卡的完整名字（例如 &lt;code&gt;... #2&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;找到 eNSP 的基础镜像配置文件（&lt;code&gt;.vbox&lt;/code&gt; 文件，在 eNSP 安装目录的 VBoxServer 下，每个设备类型一个，如路由器、无线设备等）。&lt;/li&gt;
+&lt;li&gt;先备份每个 &lt;code&gt;.vbox&lt;/code&gt; 文件，再把其中引用的旧网卡名全部替换成第 1 步记下的正确名字。
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;易错点&lt;/strong&gt;：改之前务必确保 VirtualBox 完全退出，否则改动会被覆盖；改完先备份原文件，方便回滚。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;方案 B（可选）&lt;/strong&gt;：删除损坏的幽灵网卡，重建一块名字正确的网卡（需要管理员权限，操作网卡驱动，风险略高）。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;步骤 4：逐项验证&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;修复完成后，别急着开 eNSP，先用命令行直接测试 VirtualBox 能否开虚拟机：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cmd" data-lang="cmd"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;VBoxManage startvm 你的基础镜像名 --type headless
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果提示 &lt;code&gt;successfully started&lt;/code&gt;，说明底层已通，再回 eNSP GUI 启动设备，确认&amp;quot;错误代码 40&amp;quot;不再出现。&lt;/p&gt;
+&lt;h3 id="44-排查经验总结"&gt;4.4 排查经验总结
+&lt;/h3&gt;&lt;p&gt;这次排查给我最大的教训是：&lt;strong&gt;遇到&amp;quot;教程全试过都没用&amp;quot;的错误，一定要去翻日志，用错误码说话，而不是继续盲目重装。&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;VBoxHardening.log&lt;/code&gt; 里的 &lt;code&gt;VERR_SUP_VP_NOT_SIGNED_WITH_BUILD_CERT&lt;/code&gt; 直指驱动签名冲突；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sc query&lt;/code&gt; 能快速识别&amp;quot;混进系统里的陌生版本驱动&amp;quot;；&lt;/li&gt;
+&lt;li&gt;报错信息是层层递进的：修好一个问题，下一个问题才会暴露出来，所以要有耐心逐个击破。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="五避坑总结与预防指南"&gt;五、避坑总结与预防指南
+&lt;/h2&gt;&lt;h3 id="51-易触发错误-40-的操作习惯请对照自查"&gt;5.1 易触发错误 40 的操作习惯（请对照自查）
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;危险操作&lt;/th&gt;
+ &lt;th&gt;后果&lt;/th&gt;
+ &lt;th&gt;正确做法&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;同时安装多个版本的 VirtualBox / VMware&lt;/td&gt;
+ &lt;td&gt;驱动打架、签名冲突&lt;/td&gt;
+ &lt;td&gt;只保留一个版本，卸载干净再装另一个&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;装了 WSL2 / Docker / 安卓模拟器却用旧版 eNSP&lt;/td&gt;
+ &lt;td&gt;Hyper-V 抢占硬件加速&lt;/td&gt;
+ &lt;td&gt;用 eNSP 时临时关闭 Hyper-V&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;反复重装 eNSP 但不清残留&lt;/td&gt;
+ &lt;td&gt;旧驱动、旧配置残留&lt;/td&gt;
+ &lt;td&gt;卸载后手动删目录、清注册表&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;装 eNSP 时不关杀毒软件&lt;/td&gt;
+ &lt;td&gt;驱动被拦截、安装不完整&lt;/td&gt;
+ &lt;td&gt;安装全程关闭杀毒&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;手动乱改虚拟网卡 IP&lt;/td&gt;
+ &lt;td&gt;网卡配置错乱&lt;/td&gt;
+ &lt;td&gt;严格用默认 &lt;code&gt;192.168.56.1/24&lt;/code&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="52-长期预防建议"&gt;5.2 长期预防建议
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;装 eNSP 前先做系统&amp;quot;干净化&amp;quot;&lt;/strong&gt;：确认没有其他虚拟化软件残留，关闭 Hyper-V 和杀毒。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;固定一套环境&lt;/strong&gt;：可以使用虚拟机搭建eNSP的固定环境，避免和 WSL2/Docker/游戏模拟器混用。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;养成看日志的习惯&lt;/strong&gt;：报错先看 &lt;code&gt;eNSP\vboxserver\log&lt;/code&gt; 和 VirtualBox 的 &lt;code&gt;VBoxHardening.log&lt;/code&gt;，错误码比直觉可靠。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;善用系统快照/还原点&lt;/strong&gt;：在环境能正常跑的时候创建一个还原点，出问题一键回退，比反复重装快得多。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="六end"&gt;六、END
+&lt;/h2&gt;&lt;p&gt;以上就是 eNSP 错误代码 40 的完整排查思路，从最常见的 5 个通用场景，到最棘手的&amp;quot;驱动冲突 + Hyper-V + 网卡错乱&amp;quot;叠加案例，都讲到了。&lt;/p&gt;
+&lt;p&gt;如果你也遇到了这个错误，或者用别的方法解决了（比如某个我没提到的隐藏坑），欢迎在评论区留言交流。你的一句经验，可能正好是下一位苦命孩子的答案。&lt;/p&gt;
+&lt;p&gt;可以转发给同样被 eNSP 折磨的朋友，我已经被折磨好几天了TvT，也算是终于解决了，可喜可贺喵。&lt;/p&gt;</description></item></channel></rss>
