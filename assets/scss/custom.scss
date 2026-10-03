@@ -1,1 +1,51 @@
 @import "player.scss";
+
+/* 正文中的折叠示例块（<details>/<summary>）样式，与主题卡片风格保持一致 */
+.article-content {
+    details {
+        background-color: var(--card-background);
+        border: 1px solid var(--body-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        margin: var(--spacing-md) 0;
+        padding: 0;
+
+        &[open] {
+            summary {
+                border-bottom: 1px solid var(--body-background);
+                border-radius: var(--card-border-radius) var(--card-border-radius) 0 0;
+            }
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--card-text-color-main);
+            list-style: none;
+
+            &::-webkit-details-marker {
+                display: none;
+            }
+
+            &::before {
+                content: "▸ ";
+                color: var(--body-text-color);
+                display: inline-block;
+                transition: transform 0.15s ease;
+            }
+        }
+
+        &[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        & > *:not(summary) {
+            padding: 0 var(--spacing-md) var(--spacing-sm);
+        }
+
+        & > p:first-of-type {
+            margin-top: var(--spacing-sm);
+        }
+    }
+}
