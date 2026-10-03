@@ -1,4 +1,818 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>neutrino</title><link>https://neutrino843.github.io/</link><description>Recent content on neutrino</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 15 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>eNSP「错误代码 40」问题全解析：从入门排查到疑难根治</title><link>https://neutrino843.github.io/post/ensp-error-code-40/</link><pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/ensp-error-code-40/</guid><description>&lt;h2 id="一开篇引言"&gt;一、开篇引言
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>neutrino</title><link>https://neutrino843.github.io/</link><description>Recent content on neutrino</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 03 Oct 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://neutrino843.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>AI学习（第三期）：从会写到写得好——实用技巧、开源工具与不同 AI 工具的提示词设计</title><link>https://neutrino843.github.io/post/ai-prompt-toolbox/</link><pubDate>Sat, 03 Oct 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/ai-prompt-toolbox/</guid><description>&lt;h2 id="前言从会写到写得好"&gt;前言：从会写到写得好
+&lt;/h2&gt;&lt;p&gt;前两期我们把“为什么”讲完了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;第一期&lt;/strong&gt;：告别魔法指令，用 &lt;strong&gt;CRISP&lt;/strong&gt; 框架写提示词——Context（背景与上下文）、Role（角色与视角，可选）、Intent（核心意图）、Specification（输出规格）、Paradigm（范例）。最高效的公式是 &lt;strong&gt;上下文 + 清晰指令 + 输出规格&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;第二期&lt;/strong&gt;：讲透了“以前为什么必须喂模板、现在为什么反而不用了”，并盘点了 AI 的三层局限（谄媚倾向、知识截止、来源质量）与四类实战技法（背景上下文、中性提问 + 评分标准、网络搜索、深度研究）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但这两期都还停留在“方法论”，我被问得最多的，其实是更实际的那一类：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;“老大老大，有没有更不吃操作的打法？”&lt;/p&gt;
+&lt;p&gt;“我抄了你的提示词，为什么在我这儿效果就一般？”&lt;/p&gt;
+&lt;p&gt;“有没有现成的工具能帮我管提示词、测提示词？”&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;所以这一期我们换一个视角：&lt;strong&gt;从会写到写得好&lt;/strong&gt;。用大白话说，就是让 AI 从能听懂你说话，变成能符合你心意地把事办明白。&lt;/p&gt;
+&lt;p&gt;具体分三块：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;实用技巧&lt;/strong&gt;：把我自己常用的提示词一条条拆开，讲清每条的设计逻辑、适用场景与实操效果，最后提炼成能复制到别处的普适技巧；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;开源工具&lt;/strong&gt;：盘点 8 个业内认可度较高的提示词工程开源项目，说清每个工具“解决什么问题、怎么部署、适合谁”，并附上可横向对比的数据；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;进阶用法&lt;/strong&gt;：系统讲清不同类型的 AI 工具（通用大模型、推理模型、垂直领域模型、AI 办公工具、Agent）提示词该怎么写，并把“从需求拆解到 prompt 落地”的全流程拆成五步，附分场景避坑指南。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如果你是那种AI 用得还行，但时好时坏、说不清为什么的人，这一期应该是蛮有用的一期，依旧适合小白阅读（因为我也是小白QAQ）&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="一落地实用技巧把我常用的提示词拆开看"&gt;一、落地实用技巧：把我常用的提示词拆开看
+&lt;/h2&gt;&lt;h3 id="11-先说拆解方法五格拆解法"&gt;1.1 先说拆解方法：五格拆解法
+&lt;/h3&gt;&lt;p&gt;先讲方法。直接抄别人的提示词，效果往往一般——因为提示词是&lt;strong&gt;跟着场景长出来的&lt;/strong&gt;，不是通用零件。你可以学习别人写得好的提示词，但不能完全照抄。&lt;/p&gt;
+&lt;p&gt;这有点像语文考试写作文：平时我们都会背范文、记好句，但考场上不能把范文整篇搬上去，而是&lt;strong&gt;化用&lt;/strong&gt;——借鉴它的结构，偶尔穿插几句好句，给文章增彩。&lt;/p&gt;
+&lt;p&gt;相信大多数人都做过句子仿写。比如“理想是灯，照亮我人生的前进道路”，这个句子可以拆成：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;某物 + 是 + 某物，（动作）+（对象）+（意义）。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;我学习别人的提示词，用的就是这套思路——&lt;strong&gt;先把句子拆成结构，再把结构搬到自己的场景里&lt;/strong&gt;。具体拆成五格：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;格子&lt;/th&gt;
+ &lt;th&gt;要写什么&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;① 提示词原文&lt;/td&gt;
+ &lt;td&gt;我当时真实输入的内容（含格式、换行）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;② 适用场景&lt;/td&gt;
+ &lt;td&gt;什么任务、什么角色、什么前提下用它&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;③ 设计逻辑&lt;/td&gt;
+ &lt;td&gt;它命中了哪几类要素？哪一句话是“关键杠杆”？&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;④ 实操效果&lt;/td&gt;
+ &lt;td&gt;好在哪、省了什么、什么时候翻过车&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;⑤ &lt;strong&gt;可迁移技巧（重点！）&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;把这条提示词抽掉具体内容后，剩下的可复用套路&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这五格不只是一张分析表，它同时是一个“填空模板”：以后看到好用的提示词，照着这五格记一遍；自己写新提示词时，也可以拿它自检。&lt;/p&gt;
+&lt;p&gt;可迁移技巧积累多了，你写提示词时会觉得“如有神助”——这确实和语文写作异曲同工：多积累、多学习、多总结，最后抽象成自己的一套打法。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;说明：下面 5 组提示词里，&lt;strong&gt;1.2 / 1.3 / 1.4&lt;/strong&gt; 取自本系列前两期内容与我的实际使用记录；&lt;strong&gt;1.5 / 1.6&lt;/strong&gt; 是为了覆盖高频场景补充的通用范例，你可以直接替换成自己的语料。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="12-示例-1笔记驱动式让-ai-帮你把笔记组织成文"&gt;1.2 示例 1｜笔记驱动式：让 AI 帮你把笔记组织成文
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;① 提示词原文&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;以下是我学习 AI Agent 时整理的笔记：Agent = 大模型 + 规划 + 工具调用；ReAct 框架 = 思考 + 行动 + 观察的循环；我踩过的坑：一开始不理解为什么要“工具调用”……&lt;/p&gt;
+&lt;p&gt;请基于这些笔记，帮我生成一篇博客提纲，受众是完全没有 AI 基础的读者，提纲要突出“我自己的踩坑经历”。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;② 适用场景&lt;/strong&gt;：手上已有素材（笔记、会议记录、聊天记录、旧文档），但不知道怎么组织成可交付成品时。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;③ 设计逻辑&lt;/strong&gt;：这条提示词几乎就是 CRISP 里的“C + I + S”三段。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;以下是我整理的笔记：……&lt;/code&gt; → &lt;strong&gt;C（Context）&lt;/strong&gt;：把材料前置，而不是让 AI 去猜；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;帮我生成一篇博客提纲&lt;/code&gt; → &lt;strong&gt;I（Intent）&lt;/strong&gt;：明确要的是“提纲”，不是“成文”；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;受众是完全没有 AI 基础的读者&lt;/code&gt; + &lt;code&gt;突出我的踩坑经历&lt;/code&gt; → &lt;strong&gt;S（Specification）&lt;/strong&gt;：划出了风格与内容边界。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;关键杠杆是 C 和 I 的拆分&lt;/strong&gt;：先要提纲、再要正文。很多人一上来就要“一篇完整文章”，结果结构不对就得整篇重写；先要提纲，返工成本几乎为零。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：反模式（直接说“帮我写一篇 AI Agent 入门的博客”）产出的是“大而全但没观点”的百科式文章；正模式产出的是“有个人视角、有踩坑细节”的文章。差别不在文笔，在&lt;strong&gt;素材是谁的&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;凡是“写”类任务，都先要结构、再要内容。&lt;/strong&gt; 就像写作文，我们也是先审题、再列提纲，确认提纲没问题了，才开始动笔。&lt;/p&gt;
+&lt;h3 id="13-示例-2评分卡式让-ai-给出能比较的客观结论"&gt;1.3 示例 2｜评分卡式：让 AI 给出能比较的客观结论
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;① 提示词原文&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;请客观分析以下三个商业创意：1) AI 简历优化工具（订阅制）2) 宠物纪念品定制 3) 社区团购小程序。&lt;/p&gt;
+&lt;p&gt;请使用以下评分标准作为评估依据，逐项打分（1-10 分）并给出理由：市场空间（25%）、技术可行性（20%）、获客成本（20%）、变现潜力（20%）、竞争壁垒（15%）。&lt;/p&gt;
+&lt;p&gt;不要凭主观臆想随意编造内容，每个分数请给出依据；最后输出一张汇总对比表，并给出建议优先级。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;② 适用场景&lt;/strong&gt;：任何“要判断、要比较、要选一个”的任务——选型、评审、选 offer、挑方案、评估创意。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;③ 设计逻辑&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;客观分析&lt;/code&gt; + &lt;code&gt;不要凭主观臆想编造内容&lt;/code&gt; → 对抗 AI 的&lt;strong&gt;谄媚倾向&lt;/strong&gt;（第二期讲过的“先接住情绪再给方案”）；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;评分标准 + 权重&lt;/code&gt; → 把“我觉得哪个好”这种主观题，翻译成“五个可打分的维度”，AI 没法再用“三个都很有想法”来糊弄你；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;每个分数给出依据&lt;/code&gt; + &lt;code&gt;输出对比表&lt;/code&gt; → &lt;strong&gt;S（Specification）&lt;/strong&gt;：规定了输出的形态与可核查性。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;关键是给标准，而不是给要求。&lt;/strong&gt; “帮我客观一点”是要求，AI 无法执行——它并不清楚你的“客观”是什么标准；“按这五个维度打分”是标准，AI 可以直接执行。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：直接问“你觉得我这三个创意怎么样”，AI 会先夸一番，再给一堆万金油建议；给了评分卡之后，输出变成了可比较、有依据、能拿去开会讨论的东西。&lt;strong&gt;同一句话，加了一张评分表，结论的可用性完全不同。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;当你需要判断而不是内容时，先把你的判断标准写出来。&lt;/strong&gt; 你写不出标准，说明这件事你自己也还没想清楚——这本身就是有价值的信号。这时候你可以去查一查行业标准，或者让 AI 帮你列出几份候选标准；不管最后用不用得上，&lt;strong&gt;你在找标准的过程，本身就是学习&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id="14-示例-3项目推进系列同一件事我写了-4-版"&gt;1.4 示例 3｜项目推进系列：同一件事，我写了 4 版
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;这一组是我做多阶段项目时实际用过的 4 条提示词。它们解决的是同一个问题：&lt;strong&gt;怎么让 AI 稳定地“接着往下做”，而不是每次都要我重新交代一遍背景。&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;① 提示词原文&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;版本 1（强调标准一致）：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;基于当前项目已完成的阶段成果，继续推进下一阶段任务的实施。在执行过程中，必须严格遵循并保持与前期工作一致的技术标准、质量规范、开发流程及验收准则，确保项目整体风格、代码质量和功能实现的连贯性与一致性。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;版本 2（强调节点确认与审批）：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;继续执行当前任务流程，首先对所有相关节点进行全面确认与验证。节点确认应包括但不限于：节点功能完整性检查、数据准确性验证、连接状态测试以及与上下游组件的兼容性确认。完成节点确认并确保所有节点均符合预设标准后，方可启动下一阶段任务。在进入下一阶段前，需生成节点确认报告，记录各节点状态、发现的问题及解决方案（如有），待获得审批后才能进行下一阶段的任务。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;版本 3（强调“推进 + 复盘”并行）：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;继续执行项目下一阶段的任务，同时对上一阶段已完成的代码进行全面审计与系统性反思。审计过程需重点检查代码质量、架构设计合理性、性能瓶颈、安全隐患、可维护性及文档完整性等方面，识别并记录所有问题与缺陷。针对发现的问题，需分析根本原因，提出具体改进建议，并形成详细的审计报告。确保在推进新阶段任务的同时，有效解决上一阶段遗留的技术债务，避免类似问题重复出现。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;版本 4（强调计划与进度跟踪）：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;进行项目下一阶段的搭建工作。明确当前项目所处阶段及已完成的工作内容，制定下一阶段的详细搭建计划，包括但不限于架构设计、模块划分、技术选型确认、资源配置、任务分配等关键环节。确保搭建过程符合项目整体规划和技术规范，设定明确的时间节点和阶段性目标，建立进度跟踪机制以保障搭建工作有序推进。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;② 适用场景&lt;/strong&gt;：把 AI 当成“项目执行方”来用时——比如用 AI 编程工具做多阶段开发，或者让 AI 按阶段推进一份长期方案。你希望它每次接手都在&lt;strong&gt;同一套规范&lt;/strong&gt;下工作，而不是自由发挥。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;③ 设计逻辑&lt;/strong&gt;：这 4 条的骨架其实完全一样，都是“&lt;strong&gt;指令 + 动宾结构清单 + 约束&lt;/strong&gt;”：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;继续推进下一阶段任务&lt;/code&gt; → &lt;strong&gt;I（Intent）&lt;/strong&gt;：动词开头，意图明确；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;必须遵循一致的技术标准 / 质量规范 / 开发流程 / 验收准则&lt;/code&gt; → &lt;strong&gt;S（Specification）&lt;/strong&gt;：把我脑子里的“工程规范”显性写出来，否则 AI 只会按最省事的方式做；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;生成报告 / 审计 / 进度跟踪&lt;/code&gt; → &lt;strong&gt;I 的追加要求&lt;/strong&gt;：不只做事，还要&lt;strong&gt;留下可检查的痕迹&lt;/strong&gt;（报告、清单、节点状态）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;关键杠杆是“把隐性要求显性化”。&lt;/strong&gt; 一致性、可维护性、技术债务这些词，平时很少有人会写进提示词里——但只要写上去，AI 的行为就会明显收敛。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;好的一面：在多轮、长周期的任务里，这一组提示词能有效防住AI 越做越飘——它不会在第三阶段突然换掉第一阶段的写法；&lt;/li&gt;
+&lt;li&gt;翻车的一面：&lt;strong&gt;4 条都在 100 字以上，且大量使用“全面”“系统性”“必须严格”这类无法验收的副词。&lt;/strong&gt; 当任务本身很小（比如只改一个函数）时，这一长串要求会稀释真正的指令，AI 反而抓不住重点。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;先写一个“长版”，把自己的所有要求倒出来；再压成一个“短版”，只留能验收的硬指标。&lt;/strong&gt; 上面版本 1 可以压缩成这样：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;继续推进下一阶段。硬性要求：① 沿用已定技术栈与代码风格，不引入新依赖；② 完成后输出一份改动清单（改了什么、为什么、影响范围）；③ 遇到底层设计变更，先停下来问我。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;从 120 字压到 60 字，信息量没少，AI 反而更容易执行——&lt;strong&gt;提示词的长度应该由“信息量”决定，而不是由“语气强度”决定。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="15-示例-4会议纪要两步法把一步到位拆成两次对话"&gt;1.5 示例 4｜会议纪要两步法：把“一步到位”拆成两次对话
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;【通用范例】&lt;/strong&gt; 这一条和前面几条都不同——它演示的是“&lt;strong&gt;把一个大任务拆成两次对话&lt;/strong&gt;”，也是我最推荐职场新人先掌握的一条。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;① 提示词原文&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;第一步（只提炼，不加工）：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;以下是一段会议录音的文字转写，里面有很多口语、重复和跑题。请只做一件事：提取出【讨论的议题】和【达成的结论】，逐条列出。不要补充、不要润色、不要生成任何待办事项。&lt;/p&gt;
+&lt;p&gt;（此处粘贴转写稿）&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;第二步（基于结论派任务）：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;基于上面已经确认的议题与结论，生成一张任务清单表格，字段为：任务 / 负责人 / 截止时间 / 依赖项。会议中没有明确的地方，请标注“待确认”，不要自己编。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;② 适用场景&lt;/strong&gt;：拿到一段原始、混乱的会议材料（录音转写、聊天记录、群消息），要输出一份能直接发出去的行动清单时。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;③ 设计逻辑&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一步用 &lt;code&gt;只做一件事&lt;/code&gt; + &lt;code&gt;不要补充、不要润色、不要生成待办&lt;/code&gt; → &lt;strong&gt;S（Specification）里的“负面清单”&lt;/strong&gt;。这三句否定比十句要准确都管用，它堵住了 AI 最爱做的两件事：脑补和发散；&lt;/li&gt;
+&lt;li&gt;第二步把第一步的&lt;strong&gt;输出当输入&lt;/strong&gt; → 这是关键：&lt;strong&gt;让 AI 先看清事实，再基于事实行动&lt;/strong&gt;，避免它一边读混乱原文、一边编任务；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;没有明确的地方标注“待确认”，不要自己编&lt;/code&gt; → 直接对抗&lt;strong&gt;幻觉&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：一步到位地问“帮我整理这份会议纪要并列出待办”，AI 会给你一份看起来很完整、但负责人和时间全是编出来的清单；拆成两步之后，你会先拿到一份正确的草稿，它想编也没有依据了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;当任务同时包含理解和行动两个阶段时，把它们分成两次对话。&lt;/strong&gt; 让 AI 先做阅读理解，你确认无误后，再让它做“基于阅读结果的产出”。这样一出问题，你能立刻分清是它读错了还是它做错了。&lt;/p&gt;
+&lt;h3 id="16-示例-5样例迁移式给一个例子胜过两百字描述"&gt;1.6 示例 5｜样例迁移式：给一个例子，胜过两百字描述
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;① 提示词原文&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这是我之前写的一段产品介绍，请先分析它的写作特点（句式、语气、用词习惯）：&lt;/p&gt;
+&lt;p&gt;（粘贴一段你自己写的、满意的旧文案）&lt;/p&gt;
+&lt;p&gt;然后，按照同样的风格，为下面这个新产品写一段介绍：&lt;/p&gt;
+&lt;p&gt;（粘贴新产品的要点）&lt;/p&gt;
+&lt;p&gt;要求：不要直接套用旧文案里的句子，只模仿风格。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;② 适用场景&lt;/strong&gt;：要让 AI 写出像你写的内容——个人品牌的文案、公众号文章、周报、邮件。凡是风格比内容更重要的任务，都适合。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;③ 设计逻辑&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;先分析它的写作特点&lt;/code&gt; → 让 AI &lt;strong&gt;自己把范式说清楚&lt;/strong&gt;，比直接说“模仿这个风格”更稳；&lt;/li&gt;
+&lt;li&gt;给一整段&lt;strong&gt;真实样例&lt;/strong&gt; → &lt;strong&gt;P（Paradigm）&lt;/strong&gt;：第一期讲的“一个例子胜过两百字描述”，就是这一格；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;不要直接套用旧文案里的句子，只模仿风格&lt;/code&gt; → &lt;strong&gt;S 里的负面约束&lt;/strong&gt;，防止它偷懒照抄。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：改用样例之前，我描述风格的方式是“专业一点、亲切一点、有网感”——这三个词 AI 每次理解得都不一样；改用样例之后，同一个产品连着写 5 版，风格基本能保持一致。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;能用例子表达的，就不要用形容词。&lt;/strong&gt; “高级感”“有网感”“接地气”这些词，AI 和你的理解永远有偏差；但你随手甩一段“你觉得对味”的旧内容，偏差立刻就没了。&lt;/p&gt;
+&lt;h3 id="17-提炼从上面这些提示词里能复制的-8-个普适小技巧"&gt;1.7 提炼：从上面这些提示词里，能复制的 8 个普适小技巧
+&lt;/h3&gt;&lt;p&gt;把上面每条的“⑤ 可迁移技巧”收拢一下，得到这 8 条。它们不依赖具体任务，可以直接搬到你自己的场景里：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;把“形容词要求”换成“可验收的标准”。&lt;/strong&gt; “写得好一点”没法执行；“不超过 300 字、开头一句话给结论、禁止出现‘赋能’”可以执行。&lt;strong&gt;标准必须能被检查。&lt;/strong&gt; 写不出标准时，就去查行业标准，或者让 AI 帮你列几份候选——找标准的过程本身就是学习。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;给样例，胜过给形容词。&lt;/strong&gt; 一段你满意的旧内容，比两百字风格描述管用（对应 CRISP 的 P）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用“约束式反馈”代替“批评式反馈”。&lt;/strong&gt; 不说“太笼统了”，说“把第二段扩到 200 字，补一个具体客户案例和数据”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;材料前置，不要补在后面。&lt;/strong&gt; 把笔记、文档、数据放在任务描述之前，AI 的注意力分配更合理。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;复杂任务先要“复述 + 计划”&lt;/strong&gt;，确认理解没错，再要成品。这是最便宜的止损手段。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;把“理解”和“行动”拆成两次对话&lt;/strong&gt;（1.5 的招式）。出问题时，你能立刻分清是“读错”还是“做错”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;好用的提示词要沉淀下来。&lt;/strong&gt; 一次调好的提示词，存成模板、把变量留成占位符（例如 &lt;code&gt;[产品名]&lt;/code&gt;、&lt;code&gt;[目标读者]&lt;/code&gt;），下次直接换参数复用——这就是“把提示词当资产”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不要在提示词里“补能力”&lt;/strong&gt;（第二期的结论）。给目标、给材料、给约束、给示例，是在&lt;strong&gt;补信息&lt;/strong&gt;，永远有效；堆角色、堆分步命令、堆情绪话术，是在&lt;strong&gt;补旧模型缺失的能力&lt;/strong&gt;，2026 年的模型已经内化了，补了反而稀释重点。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="二开源工具推荐提示词工程的工具箱"&gt;二、开源工具推荐：提示词工程的“工具箱”
+&lt;/h2&gt;&lt;h3 id="21-先想清楚你要解决的是哪个环节的问题"&gt;2.1 先想清楚：你要解决的是哪个环节的问题
+&lt;/h3&gt;&lt;p&gt;“提示词工程工具”这个词其实很含糊。按工作环节，工具可以分成五类。&lt;strong&gt;先定位你的痛点，再挑工具&lt;/strong&gt;，不然很容易装了一堆用不上：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;你遇到的痛点&lt;/th&gt;
+ &lt;th&gt;对应环节&lt;/th&gt;
+ &lt;th&gt;该看哪一类工具&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;提示词写一次好用、写在别处就不好用&lt;/td&gt;
+ &lt;td&gt;复用&lt;/td&gt;
+ &lt;td&gt;模式库 / 提示词管理&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;不知道新版本提示词是不是真的比旧版好&lt;/td&gt;
+ &lt;td&gt;评测&lt;/td&gt;
+ &lt;td&gt;评测框架 / 回归测试&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;上线后偶尔抽风，不知道哪一步出了问题&lt;/td&gt;
+ &lt;td&gt;观测&lt;/td&gt;
+ &lt;td&gt;可观测性 / 追踪&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;输出格式总是差一点，程序解析不了&lt;/td&gt;
+ &lt;td&gt;约束&lt;/td&gt;
+ &lt;td&gt;约束生成&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;不想手调提示词，想让算法帮我调&lt;/td&gt;
+ &lt;td&gt;优化&lt;/td&gt;
+ &lt;td&gt;自动优化框架&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="22-八个值得知道的开源项目"&gt;2.2 八个值得知道的开源项目
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;数据说明&lt;/strong&gt;：以下信息以各项目&lt;strong&gt;官方仓库与官方文档&lt;/strong&gt;为准。星标、最新版本、最近提交时间等数据&lt;strong&gt;查询于 2026-10-03&lt;/strong&gt;，会随时间变化，&lt;strong&gt;选型前请自己再确认一次&lt;/strong&gt;（尤其是“Open Core”类项目，哪些功能在开源许可下、哪些在企业版里，差别很大）。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;① Fabric&lt;/strong&gt;：把提示词做成可复用的“模式库”（零代码首选）&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：把你重复用到的提示词整理成可复用的 &lt;strong&gt;Patterns（模式）&lt;/strong&gt;，通过命令行直接调用各种大模型完成任务（总结、提取、改写、分析等）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;许可证 / 语言&lt;/strong&gt;：MIT / Go。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;仓库数据&lt;/strong&gt;：星标 4.4 万+ ｜ 最新版本 v1.4.507 ｜ 最近提交 2026-10-03（维护活跃）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署方式&lt;/strong&gt;：官方提供一键安装脚本；Windows 也可用包管理器安装（官方给出的命令包括 &lt;code&gt;winget install danielmiessler.Fabric&lt;/code&gt;），另有 Docker 方式。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;：习惯命令行、希望把一套固定提问方式沉淀下来反复用的人；也适合做批量文本处理（例如把一批文章统一改写、统一提取要点）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优势&lt;/strong&gt;：几乎不需要写代码；模式可复用、可分享；支持多种模型供应商。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限&lt;/strong&gt;：需要自己配 API Key；它本身&lt;strong&gt;不做评测和安全测试&lt;/strong&gt;；模式库的质量依赖社区贡献。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一句话&lt;/strong&gt;：如果你只想“把好用的提示词存起来随时调用”，这是最容易上手的起点。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;② promptfoo&lt;/strong&gt;：提示词的“单元测试 + 红队”（评测入门首选）&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：用声明式配置（YAML）定义提示词与测试用例，自动跑评测、对比不同模型 / 不同提示词的效果，支持多种评判方式（字符串相似度、正则、LLM 当裁判等）；同时提供&lt;strong&gt;红队测试&lt;/strong&gt;能力，用于扫描提示词与 AI 应用的安全漏洞。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;许可证 / 语言&lt;/strong&gt;：MIT / TypeScript（Node.js）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;仓库数据&lt;/strong&gt;：星标 2.6 万+ ｜ 最新版本 0.123.1 ｜ 最近提交 2026-10-03（维护活跃）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署方式&lt;/strong&gt;：命令行工具，官方给出的安装方式包括 &lt;code&gt;npm install -g promptfoo&lt;/code&gt;、&lt;code&gt;npx promptfoo@latest&lt;/code&gt;、&lt;code&gt;brew&lt;/code&gt;、&lt;code&gt;pip&lt;/code&gt; 等；典型流程是初始化示例 → 跑评测 → 打开本地报告页面查看结果。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;：想验证“B 版提示词是不是真的比 A 版好”；想把提示词评测接入 CI，每次改完自动跑一遍，防止效果回退。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优势&lt;/strong&gt;：配置驱动，基本不用写代码；&lt;strong&gt;默认本地运行，数据不外传&lt;/strong&gt;；支持的模型供应商很多。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限&lt;/strong&gt;：评测本身要调用模型 API（有成本）；复杂场景仍可能需写少量代码；它聚焦“上线前”，&lt;strong&gt;没有生产环境的持续监控能力&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;需要知道的变化&lt;/strong&gt;：&lt;strong&gt;2026 年 3 月 9 日，promptfoo 官方宣布被 OpenAI 收购&lt;/strong&gt;（OpenAI 官方公告与 promptfoo 官方博客均有说明），官方同时明确&lt;strong&gt;项目仍然开源、仍为 MIT 许可证&lt;/strong&gt;。这里把它写出来不是要劝退，而是想说明一个选型常识：&lt;strong&gt;开源项目的治理归属会变，评估工具时要顺带看一眼它属于谁、路线图会不会偏向某一家的生态。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;③ Langfuse&lt;/strong&gt;：提示词管理 + 线上观测 + 评估的一体化平台&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：LLM 应用的&lt;strong&gt;可观测性（追踪每次调用）&lt;/strong&gt;、&lt;strong&gt;提示词管理（集中管理、版本控制、协作迭代、一键回滚）&lt;/strong&gt;、&lt;strong&gt;评估（LLM 当裁判 / 人工标注 / 自定义评估）&lt;/strong&gt;，还有用于试提示词的 Playground。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;许可证 / 语言&lt;/strong&gt;：&lt;strong&gt;Open Core&lt;/strong&gt;——&lt;strong&gt;核心部分是 MIT 许可&lt;/strong&gt;，但 &lt;code&gt;ee/&lt;/code&gt; 目录下的内容由商业许可（Langfuse Enterprise License）管理。语言以 TypeScript 为主，提供 Python / JS-TS SDK。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;仓库数据&lt;/strong&gt;：星标 3.5 万+ ｜ 最新版本 v4.50.0 ｜ 最近提交 2026-10-02（维护活跃）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署方式&lt;/strong&gt;：可以用官方云服务；&lt;strong&gt;也支持完全自托管&lt;/strong&gt;，官方提供本地 Docker Compose（&lt;code&gt;docker compose up&lt;/code&gt;）、单机、Kubernetes（Helm）以及云厂商 Terraform 等多种方案。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;：团队协作开发 AI 应用；把提示词从代码里抽出来单独管理；上线后定位“哪一步调用出的问题”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优势&lt;/strong&gt;：能完全自托管、数据自己拿着；生态集成多（OpenTelemetry 体系、主流应用框架）；提示词版本管理这块体验成熟。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限&lt;/strong&gt;：自托管是多组件的，有运维成本；接入需要在代码里加 SDK / 埋点；&lt;strong&gt;企业功能在商业许可里，不是全都能白嫖&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一句话&lt;/strong&gt;：从“个人调提示词”升级到“团队管提示词”时，这是最常见的落点。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;④ Agenta&lt;/strong&gt;：面向团队的一体化 LLMOps 平台（UI 友好）&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：把&lt;strong&gt;提示词工程、评估（人工评估 + 自动评估）、可观测性（原生 OpenTelemetry 追踪）&lt;/strong&gt;整合在一个平台里。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;许可证 / 语言&lt;/strong&gt;：同样是 &lt;strong&gt;Open Core&lt;/strong&gt;——核心 MIT，&lt;code&gt;ee/&lt;/code&gt; 目录单独许可。前端 TypeScript，后端 Python。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;仓库数据&lt;/strong&gt;：星标 4.8k ｜ 最新版本 v0.121.7 ｜ 最近提交 2026-10-03（维护活跃）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署方式&lt;/strong&gt;：有官方云服务；自托管用官方提供的 Docker Compose 方案。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;：团队里既有工程师也有产品 / 领域专家时，让&lt;strong&gt;不写代码的人也能在界面上对比提示词、跑评估&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优势&lt;/strong&gt;：UI 上手门槛低；追踪基于 OpenTelemetry，和现有可观测体系兼容；支持较多模型。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限&lt;/strong&gt;：自托管要起多个服务，部署难度中偏高；深度集成仍需写代码。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一句话&lt;/strong&gt;：和 Langfuse 定位接近，&lt;strong&gt;选哪个主要看团队里“不写代码的人”占多少&lt;/strong&gt;——那部分人越多，UI 友好度越重要。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;⑤ DeepEval&lt;/strong&gt;：像写单元测试一样写 AI 测试（Python 用户）&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：一个开源的大模型评估框架，写法&lt;strong&gt;类似 Pytest&lt;/strong&gt;——你把评测写成测试用例，覆盖相关性、忠实度、幻觉、任务完成度、RAG 指标、多轮对话指标等等。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;许可证 / 语言&lt;/strong&gt;：Apache-2.0 / Python。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;仓库数据&lt;/strong&gt;：星标 1.9 万+ ｜ 最新版本 python-v4.2.4 ｜ 最近提交 2026-10-02（维护活跃）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署方式&lt;/strong&gt;：&lt;code&gt;pip install -U deepeval&lt;/code&gt;，然后按官方方式跑测试命令。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;：给 RAG、Agent、客服机器人写回归测试；在 CI 里给质量把关；对比不同提示词 / 模型 / 架构的效果。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优势&lt;/strong&gt;：和 Python 测试生态无缝衔接；指标覆盖广；部分指标可以本地跑，不依赖外部 API。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限&lt;/strong&gt;：&lt;strong&gt;必须写 Python&lt;/strong&gt;；多数指标依赖“用模型当裁判”，需要 API Key。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一句话&lt;/strong&gt;：如果你是开发者，且有“每次改完提示词都要自动验一遍”的需求，它是最顺手的。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;⑥ Guidance&lt;/strong&gt;：强制输出符合格式的“约束生成”&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：用编程方式把&lt;strong&gt;控制流（条件、循环、工具调用）和生成过程交织&lt;/strong&gt;起来，并且可以&lt;strong&gt;强制模型的输出符合正则、上下文无关文法（CFG）或 JSON Schema&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;许可证 / 语言&lt;/strong&gt;：MIT / Python。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;仓库数据&lt;/strong&gt;：星标 2.2 万+ ｜ 最新版本 0.3.2 ｜ 最近提交 2026-05-21。&lt;strong&gt;注意：它的更新频率明显低于本表其他项目&lt;/strong&gt;，选型前建议先看仓库近况。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署方式&lt;/strong&gt;：&lt;code&gt;pip install guidance&lt;/code&gt;，配合你选用的后端模型一起用。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;：输出的东西必须“能被程序正确解析”时——比如固定结构的 JSON、特定格式的文本、需要严格遵循语法的生成任务。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优势&lt;/strong&gt;：约束能力强，能显著减少“就差一个括号 / 一个字段”的返工；也能降低无效 token 的消耗。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限&lt;/strong&gt;：必须写 Python；部分高级约束需要后端模型支持；适合工程场景，不适合纯聊天用户。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一句话&lt;/strong&gt;：&lt;strong&gt;“让模型不可能输出错误格式”&lt;/strong&gt;，比“在提示词里反复强调要输出 JSON”可靠得多。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;⑦ DSPy&lt;/strong&gt;：不手写提示词，让算法帮你优化&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：用&lt;strong&gt;写代码的方式构建 LLM 程序&lt;/strong&gt;（把任务拆成可组合的模块），再由框架的优化算法&lt;strong&gt;自动寻找更好的提示词 / 示例组合&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;许可证 / 语言&lt;/strong&gt;：MIT / Python，由斯坦福团队维护。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;仓库数据&lt;/strong&gt;：星标 3.8 万+ ｜ 最新版本 3.4.0 ｜ 最近提交 2026-10-02（维护活跃）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署方式&lt;/strong&gt;：&lt;code&gt;pip install dspy&lt;/code&gt;，纯 Python 库。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;：要做多阶段的复杂流水线（分类、检索问答、Agent 循环），并且希望效果&lt;strong&gt;可复现、可自动化调优&lt;/strong&gt;，而不是靠手感改提示词。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优势&lt;/strong&gt;：把“提示词调优”从手艺变成流程；有配套论文与持续演进的优化器；社区大。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限&lt;/strong&gt;：&lt;strong&gt;必须写 Python，学习曲线明显&lt;/strong&gt;；要有一定的评测数据才能发挥价值；依赖模型 API。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一句话&lt;/strong&gt;：它代表的是另一种思路——&lt;strong&gt;不是把提示词写好，而是把提示词交给程序去优化&lt;/strong&gt;。对纯使用者来说门槛偏高，但值得知道这条路存在。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;⑧ OpenLIT&lt;/strong&gt;：OpenTelemetry 原生的可观测 + 评估&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：基于 OpenTelemetry 的 AI 工程平台，用很少的代码给 LLM 应用接上可观测性（追踪、成本、延迟），同时提供评估、提示词版本管理、Playground 等能力。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;许可证 / 语言&lt;/strong&gt;：Apache-2.0 / Python SDK（另有 TypeScript、Go SDK；平台前端为 TypeScript）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;仓库数据&lt;/strong&gt;：星标 2.8k ｜ 最新版本 openlit-2.1.0 ｜ 最近提交 2026-10-01（维护活跃）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署方式&lt;/strong&gt;：SDK 侧 &lt;code&gt;pip install openlit&lt;/code&gt; 并初始化；平台侧官方提供 Docker Compose 自托管方案。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;使用场景&lt;/strong&gt;：&lt;strong&gt;已经有一套 OpenTelemetry 可观测体系&lt;/strong&gt;、希望把 AI 调用也纳进去的团队。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优势&lt;/strong&gt;：不绑定厂商；接入成本低；自托管、数据本地。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;局限&lt;/strong&gt;：自托管平台多组件、部署难度中等；社区规模明显小于 Langfuse。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一句话&lt;/strong&gt;：&lt;strong&gt;如果你公司已经有可观测体系，选它比选一个独立平台更省事。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;h3 id="23-横向对比两张表看清差异"&gt;2.3 横向对比：两张表看清差异
+&lt;/h3&gt;&lt;p&gt;先看&lt;strong&gt;功能定位&lt;/strong&gt;：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;项目&lt;/th&gt;
+ &lt;th&gt;许可证&lt;/th&gt;
+ &lt;th&gt;语言&lt;/th&gt;
+ &lt;th&gt;一句话定位&lt;/th&gt;
+ &lt;th&gt;上手难度&lt;/th&gt;
+ &lt;th&gt;要写代码吗&lt;/th&gt;
+ &lt;th&gt;最适合&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Fabric&lt;/td&gt;
+ &lt;td&gt;MIT&lt;/td&gt;
+ &lt;td&gt;Go&lt;/td&gt;
+ &lt;td&gt;提示词模式库 + 命令行调用&lt;/td&gt;
+ &lt;td&gt;低&lt;/td&gt;
+ &lt;td&gt;不用&lt;/td&gt;
+ &lt;td&gt;个人、命令行党&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;promptfoo&lt;/td&gt;
+ &lt;td&gt;MIT&lt;/td&gt;
+ &lt;td&gt;TypeScript&lt;/td&gt;
+ &lt;td&gt;提示词评测 + 红队&lt;/td&gt;
+ &lt;td&gt;低&lt;/td&gt;
+ &lt;td&gt;基本不用&lt;/td&gt;
+ &lt;td&gt;改提示词前想验证效果的人&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Langfuse&lt;/td&gt;
+ &lt;td&gt;核心 MIT + &lt;code&gt;ee/&lt;/code&gt; 商业许可&lt;/td&gt;
+ &lt;td&gt;TypeScript&lt;/td&gt;
+ &lt;td&gt;观测 + 提示词管理 + 评估&lt;/td&gt;
+ &lt;td&gt;中&lt;/td&gt;
+ &lt;td&gt;部分（要接 SDK）&lt;/td&gt;
+ &lt;td&gt;团队、要自托管&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Agenta&lt;/td&gt;
+ &lt;td&gt;核心 MIT + &lt;code&gt;ee/&lt;/code&gt; 商业许可&lt;/td&gt;
+ &lt;td&gt;TS + Python&lt;/td&gt;
+ &lt;td&gt;一体化 LLMOps 平台&lt;/td&gt;
+ &lt;td&gt;中偏高&lt;/td&gt;
+ &lt;td&gt;部分（UI 可免代码）&lt;/td&gt;
+ &lt;td&gt;团队、非技术成员多&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;DeepEval&lt;/td&gt;
+ &lt;td&gt;Apache-2.0&lt;/td&gt;
+ &lt;td&gt;Python&lt;/td&gt;
+ &lt;td&gt;类 Pytest 的评估框架&lt;/td&gt;
+ &lt;td&gt;低&lt;/td&gt;
+ &lt;td&gt;要（Python）&lt;/td&gt;
+ &lt;td&gt;开发者做回归测试&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Guidance&lt;/td&gt;
+ &lt;td&gt;MIT&lt;/td&gt;
+ &lt;td&gt;Python&lt;/td&gt;
+ &lt;td&gt;约束生成、强制输出格式&lt;/td&gt;
+ &lt;td&gt;中&lt;/td&gt;
+ &lt;td&gt;要（Python）&lt;/td&gt;
+ &lt;td&gt;要求输出可被程序解析&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;DSPy&lt;/td&gt;
+ &lt;td&gt;MIT&lt;/td&gt;
+ &lt;td&gt;Python&lt;/td&gt;
+ &lt;td&gt;用代码构建 + 算法优化提示词&lt;/td&gt;
+ &lt;td&gt;高&lt;/td&gt;
+ &lt;td&gt;要（Python）&lt;/td&gt;
+ &lt;td&gt;研究者、复杂流水线&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;OpenLIT&lt;/td&gt;
+ &lt;td&gt;Apache-2.0&lt;/td&gt;
+ &lt;td&gt;Python SDK&lt;/td&gt;
+ &lt;td&gt;OTel 原生可观测 + 评估&lt;/td&gt;
+ &lt;td&gt;中&lt;/td&gt;
+ &lt;td&gt;部分&lt;/td&gt;
+ &lt;td&gt;已有 OTel 体系的团队&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;再看&lt;strong&gt;活跃度&lt;/strong&gt;（数据查询于 2026-10-03）：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;项目&lt;/th&gt;
+ &lt;th&gt;GitHub 星标&lt;/th&gt;
+ &lt;th&gt;最新版本&lt;/th&gt;
+ &lt;th&gt;最近提交&lt;/th&gt;
+ &lt;th&gt;维护状态判断&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Fabric&lt;/td&gt;
+ &lt;td&gt;4.4 万+&lt;/td&gt;
+ &lt;td&gt;v1.4.507&lt;/td&gt;
+ &lt;td&gt;2026-10-03&lt;/td&gt;
+ &lt;td&gt;活跃&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;promptfoo&lt;/td&gt;
+ &lt;td&gt;2.6 万+&lt;/td&gt;
+ &lt;td&gt;0.123.1&lt;/td&gt;
+ &lt;td&gt;2026-10-03&lt;/td&gt;
+ &lt;td&gt;活跃&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Langfuse&lt;/td&gt;
+ &lt;td&gt;3.5 万+&lt;/td&gt;
+ &lt;td&gt;v4.50.0&lt;/td&gt;
+ &lt;td&gt;2026-10-02&lt;/td&gt;
+ &lt;td&gt;活跃&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Agenta&lt;/td&gt;
+ &lt;td&gt;4.8k&lt;/td&gt;
+ &lt;td&gt;v0.121.7&lt;/td&gt;
+ &lt;td&gt;2026-10-03&lt;/td&gt;
+ &lt;td&gt;活跃&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;DeepEval&lt;/td&gt;
+ &lt;td&gt;1.9 万+&lt;/td&gt;
+ &lt;td&gt;python-v4.2.4&lt;/td&gt;
+ &lt;td&gt;2026-10-02&lt;/td&gt;
+ &lt;td&gt;活跃&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Guidance&lt;/td&gt;
+ &lt;td&gt;2.2 万+&lt;/td&gt;
+ &lt;td&gt;0.3.2&lt;/td&gt;
+ &lt;td&gt;2026-05-21&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;更新变慢，需留意&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;DSPy&lt;/td&gt;
+ &lt;td&gt;3.8 万+&lt;/td&gt;
+ &lt;td&gt;3.4.0&lt;/td&gt;
+ &lt;td&gt;2026-10-02&lt;/td&gt;
+ &lt;td&gt;活跃&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;OpenLIT&lt;/td&gt;
+ &lt;td&gt;2.8k&lt;/td&gt;
+ &lt;td&gt;openlit-2.1.0&lt;/td&gt;
+ &lt;td&gt;2026-10-01&lt;/td&gt;
+ &lt;td&gt;活跃&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;怎么读这两张表&lt;/strong&gt;：星标高不代表适合你（Langfuse 和 Agenta 都是 3 万+ / 4.8k，但对个人用户来说都太重了）；&lt;strong&gt;“最近提交”比“星标总数”更能反映一个项目的健康度&lt;/strong&gt;——一个半年没提交的项目，即便星标很高，遇到问题时也可能没人修。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;details&gt;
+&lt;summary&gt;术语卡片：LLM-as-judge（用模型当裁判）&lt;/summary&gt;
+&lt;p&gt;&lt;strong&gt;LLM-as-judge&lt;/strong&gt;：让一个（通常更强的）模型按照给定的评分标准，去给另一个模型的输出打分。它是目前规模化评估“主观质量”（是否有帮助、语气是否合适、是否忠于原文）最现实的手段。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;但它有两个坑：一是&lt;strong&gt;裁判本身有偏见&lt;/strong&gt;（例如偏好更长的回答、偏好和自己风格接近的回答）；二是&lt;strong&gt;裁判会漂移&lt;/strong&gt;（换了模型版本，分数就不可比了）。所以专业做法是：固定裁判模型版本 + 抽样人工作为校准基准。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;术语卡片：红队测试（Red Teaming）&lt;/summary&gt;
+&lt;p&gt;&lt;strong&gt;红队测试&lt;/strong&gt;：用对抗性的输入，主动攻击自己的 AI 应用，在真实攻击者之前把漏洞找出来。常见手法包括提示词注入、越狱（jailbreak）、诱导泄露隐私数据、诱导调用不该调用的工具等。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;它和“评测”的区别在于：评测回答的是“&lt;strong&gt;它做得好不好&lt;/strong&gt;”，红队回答的是“&lt;strong&gt;它会不会被人搞坏&lt;/strong&gt;”。对要上线的 Agent 类应用来说，这两件事都得做——尤其是接入了文件、数据库或支付能力的 Agent。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/details&gt;
+&lt;h3 id="24-怎么选一个不用纠结的决策清单"&gt;2.4 怎么选：一个不用纠结的决策清单
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;我只想&lt;strong&gt;把好用的提示词存下来反复用&lt;/strong&gt; → &lt;strong&gt;Fabric&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;我想知道&lt;strong&gt;新提示词到底有没有变好&lt;/strong&gt; → &lt;strong&gt;promptfoo&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;我们&lt;strong&gt;团队&lt;/strong&gt;要一起管提示词，还要看线上表现 → &lt;strong&gt;Langfuse&lt;/strong&gt;（偏工程）/ &lt;strong&gt;Agenta&lt;/strong&gt;（偏 UI 友好）&lt;/li&gt;
+&lt;li&gt;我是&lt;strong&gt;写 Python 的开发者&lt;/strong&gt;，想把评测接进 CI → &lt;strong&gt;DeepEval&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;我要的是&lt;strong&gt;输出格式永远正确&lt;/strong&gt;，能被程序解析 → &lt;strong&gt;Guidance&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;我不想手写提示词，想让&lt;strong&gt;算法帮我调&lt;/strong&gt; → &lt;strong&gt;DSPy&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;我们&lt;strong&gt;已经有 OpenTelemetry 体系&lt;/strong&gt;，只想接进去 → &lt;strong&gt;OpenLIT&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;一个提醒&lt;/strong&gt;：GitHub 星标数 ≠ 适合你。选型的第一问永远是“&lt;strong&gt;我要解决上面 2.1 表格里的哪一个痛点&lt;/strong&gt;”，而不是“哪个项目最火”。另外，看到“Open Core”类项目，先翻一下 &lt;code&gt;ee/&lt;/code&gt; 目录的许可证——你需要的功能可能不在开源部分里。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;如果你是完全没用过工具的新手&lt;/strong&gt;，建议的上手顺序是：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;先用 Fabric&lt;/strong&gt;（装好就能用，几分钟上手），把日常提示词沉淀成自己的模式库；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;再用 promptfoo&lt;/strong&gt; 跑一次“新旧提示词对比”，亲身体会一下“有评测”和“凭感觉”的差别；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;等到需要多人协作、或者要盯线上表现时&lt;/strong&gt;，再考虑 Langfuse / Agenta 这类平台。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;别一上来就部署平台——&lt;strong&gt;工具是来解决痛点的，不是用来制造“我在做 AI 工程”的错觉的。&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="三进阶用法不同类型的-ai-工具提示词该怎么写"&gt;三、进阶用法：不同类型的 AI 工具，提示词该怎么写
+&lt;/h2&gt;&lt;p&gt;到这一步，我们已经知道怎么把提示词写好，也知道有哪些工具可用了。但还有一层常被忽略的差别：&lt;strong&gt;你面对的不是“一个 AI”，而是好几类完全不同的 AI 工具&lt;/strong&gt;。同一套提示词换个工具就失效，往往不是模型变笨了，而是&lt;strong&gt;你还在用 A 类工具的写法去指挥 B 类工具&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id="31-五类-ai-工具的设计逻辑差异"&gt;3.1 五类 AI 工具的设计逻辑差异
+&lt;/h3&gt;&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;类型一：通用大模型（对话式）&lt;/strong&gt;——最常见，也最容易写过头&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：上下文长、能理解模糊表达、会主动追问；你写多写少它都能接。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;设计逻辑&lt;/strong&gt;：&lt;strong&gt;目标 + 边界 + 材料&lt;/strong&gt;，也就是 CRISP 的 C / I / S 三件套。因为它的能力已经内化，你要做的是“说清楚要什么”，而不是“教它怎么想”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;常见错误&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;把提示词写成小作文，核心指令被稀释；&lt;/li&gt;
+&lt;li&gt;一整段里塞了三个不相关的任务，结果每个都做了一半；&lt;/li&gt;
+&lt;li&gt;用形容词描述风格（“高级感一点”），而不是给样例。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;建议写法&lt;/strong&gt;：一次只给一个主任务；先给材料再给要求；风格用样例或明确的禁止项来表达。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;类型二：推理型 / 深度思考模型&lt;/strong&gt;——少指挥，多给标准&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：内置“先想后答”，会自己搭推理步骤。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;设计逻辑&lt;/strong&gt;：&lt;strong&gt;给判断标准，不要给思考步骤。&lt;/strong&gt; 它已经有思维链了，你再写“请一步步思考”，属于第二期说的“补能力”——补了反而画蛇添足。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;真正有效的做法&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;明确&lt;strong&gt;验收标准&lt;/strong&gt;（“结论必须能被这 5 条标准逐条检验”）；&lt;/li&gt;
+&lt;li&gt;明确&lt;strong&gt;约束条件&lt;/strong&gt;（数据范围、时间范围、必须 / 禁止引用的来源）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;去看它的思考过程&lt;/strong&gt;：这是判断“它有没有理解偏”的最佳窗口，也是发现你题干有歧义的最快方式。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;常见错误&lt;/strong&gt;：让它“详细一点”，结果它把思考过程也写进答案里——这时要明确说“只输出结论，不要输出推理过程”。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;类型三：垂直领域模型 / 专用工具&lt;/strong&gt;——用它的行话，别用通用写法&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：领域词表更准、能力边界更窄。代码类、图像类、翻译类、法律医疗类工具都属于这一类。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;设计逻辑&lt;/strong&gt;：&lt;strong&gt;用它领域的“关键词 + 结构”，而不是通用自然语言描述。&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;代码类：写清语言 / 框架版本、输入输出约定、依赖限制、错误处理要求；给“能跑的参考实现”比给文字描述有效得多。&lt;/li&gt;
+&lt;li&gt;图像类：把画面拆成&lt;strong&gt;主体 + 动作 + 环境 + 风格 + 镜头 / 光线 + 画幅&lt;/strong&gt;六要素，一次只改一个要素。&lt;/li&gt;
+&lt;li&gt;翻译类：明确&lt;strong&gt;领域&lt;/strong&gt;（法律 / 口语 / 技术文档）、&lt;strong&gt;读者&lt;/strong&gt;、&lt;strong&gt;术语表&lt;/strong&gt;，并要求它列出“不确定的译法”供你复核。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;常见错误&lt;/strong&gt;：拿通用大模型的“角色扮演 + 分步思考”去套垂直工具，而垂直工具往往&lt;strong&gt;只认结构化参数&lt;/strong&gt;，不吃这一套。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;类型四：AI 办公工具 / 产品内嵌 AI&lt;/strong&gt;——改“输入”，别改“指令”&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：提示词被产品包装过，你可调的空间很小（通常就是一个输入框或几个按钮）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;设计逻辑&lt;/strong&gt;：&lt;strong&gt;既然指令改不动，那就把力气花在“喂什么材料”上。&lt;/strong&gt; 同一句“帮我总结这份会议纪要”，喂进去的是原始录音转写稿（含废话、含口语），还是你筛过一遍的要点，结果差距巨大。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;真正有效的做法&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;先整理输入：删废话、统一术语、把关键数据单独列出来；&lt;/li&gt;
+&lt;li&gt;用&lt;strong&gt;结构化的输入&lt;/strong&gt;换&lt;strong&gt;结构化的输出&lt;/strong&gt;——你给它一张表，它更容易还你一张表；&lt;/li&gt;
+&lt;li&gt;善用“二次加工”：先让它按默认方式出一版，再把这一版当作材料，用自己的提示词精修。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;避坑提醒&lt;/strong&gt;：注意数据边界。涉及公司内部资料、个人信息、客户数据时，先确认这个工具的&lt;strong&gt;数据使用政策&lt;/strong&gt;（会不会用于训练、存在哪里），再决定要不要把内容贴进去。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;strong&gt;类型五：Agent / 工作流型工具&lt;/strong&gt;——给目标、给验收、给停止条件&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：不只是回答，而是要&lt;strong&gt;多步执行&lt;/strong&gt;（查资料、调工具、改文件、跑代码）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;设计逻辑&lt;/strong&gt;：&lt;strong&gt;目标 + 成功标准 + 边界 + 停止条件。&lt;/strong&gt; 它自己会规划路径，所以你要给的是“什么算完成”，而不是“第一步做什么、第二步做什么”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;关键四问（建议每次都写清）&lt;/strong&gt;：
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;目标&lt;/strong&gt;：最终要交付什么（文件？数据？结论？）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;验收标准&lt;/strong&gt;：满足什么条件才算成功（能跑通？数据对得上？格式正确？）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;边界&lt;/strong&gt;：哪些能做、哪些绝对不能碰（不许改动的文件、不许调用的付费接口、不许联网）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;停止条件&lt;/strong&gt;：什么情况下应当停下来问你，而不是自己硬试&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;常见错误&lt;/strong&gt;：只给目标不给边界，于是它“为了完成任务”擅自删文件、改配置、乱调接口。&lt;strong&gt;Agent 的破坏力来自它的执行力，所以边界比目标更重要。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;h3 id="32-从需求拆解到-prompt-落地的五步流程"&gt;3.2 从需求拆解到 prompt 落地的五步流程
+&lt;/h3&gt;&lt;p&gt;上面是“面对不同工具怎么写”，这一段是“拿到一个任务，怎么一步步变成能用的 prompt”。这套流程对五类工具都适用。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step 1｜先定义终产物，而不是先想提示词&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;问自己一句：&lt;strong&gt;任务完成后，交付物长什么样？&lt;/strong&gt; 是一份文档、一张表、一段代码、一个结论，还是“帮我做完一件事”？&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;如果答不上来，说明你还没想清楚要什么——这时候写提示词，写得再漂亮也是白写。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Step 2｜拆任务链，标出“谁做哪一段”&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;把任务拆成步骤，然后逐步标注：&lt;strong&gt;哪些交给 AI、哪些你自己做、哪一步最容易出错。&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;经验判断：&lt;strong&gt;越靠近“判断”和“担责”的环节，越要留给人&lt;/strong&gt;；越靠近“收集”和“整理”的环节，越适合交给 AI。这一步也顺带决定了你要不要用 Agent（多步自动执行），还是普通对话就够了。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Step 3｜补齐材料与边界&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;把 Step 2 里 AI 需要用到的东西&lt;strong&gt;前置&lt;/strong&gt;：参考资料、数据、样例、术语表。&lt;/p&gt;
+&lt;p&gt;然后写清边界：&lt;strong&gt;必须&lt;/strong&gt;做什么（硬性要求）、&lt;strong&gt;禁止&lt;/strong&gt;做什么（雷点）、&lt;strong&gt;不确定时怎么办&lt;/strong&gt;（是猜还是问你）。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;第二期反复强调的“给目标与边界”，落地的具体动作就在这一步。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Step 4｜写出初版 prompt，用 CRISP 做自检&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;初版不需要完美，写完用第一期的 CRISP 过一遍就行：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;C&lt;/strong&gt; 上下文：材料给全了吗？&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;R&lt;/strong&gt; 角色：需要特定视角吗？（可选）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;I&lt;/strong&gt; 意图：一句话能不能说清“要它做什么”？&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;S&lt;/strong&gt; 规格：格式、长度、风格、禁忌写了吗？&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P&lt;/strong&gt; 范例：有没有一个能代表“理想输出”的样例？&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;五要素不必全写，但 &lt;strong&gt;I 必须有&lt;/strong&gt;。如果只能写一句，就把那一句说到极致清楚。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Step 5｜迭代：从“看结果”改成“看理解”&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;大多数人对结果的返工方式是“不对，重写”，效率很低。更好的迭代顺序是：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;先看它有没有理解错&lt;/strong&gt;（要求它复述理解，或直接看深度思考过程）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;理解对了但结果不对&lt;/strong&gt; → 用&lt;strong&gt;约束式反馈&lt;/strong&gt;修正（“把第二段扩到 200 字，补一个案例”）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;理解就错了&lt;/strong&gt; → 别改句子了，&lt;strong&gt;回去补材料或补边界&lt;/strong&gt;，问题出在输入，不在指令；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;连续两次同类错误&lt;/strong&gt; → 说明这个任务不适合纯对话完成，考虑换工具类型（比如改成 Agent，或改用能保证格式的约束生成方案）。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;details&gt;
+&lt;/details&gt;
+&lt;h3 id="33-分场景避坑指南"&gt;3.3 分场景避坑指南
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;场景&lt;/th&gt;
+ &lt;th&gt;最常见的坑&lt;/th&gt;
+ &lt;th&gt;怎么绕开&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;写作 / 文案&lt;/td&gt;
+ &lt;td&gt;一上来就要“完整成稿”，结构不对就整篇重写&lt;/td&gt;
+ &lt;td&gt;先要 3 个差异化提纲 → 选定 → 再展开；风格用样例表达&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;编程 / 代码&lt;/td&gt;
+ &lt;td&gt;只说需求，不说运行环境与约束，代码跑不通&lt;/td&gt;
+ &lt;td&gt;给语言与依赖版本、输入输出约定、错误处理要求；让它&lt;strong&gt;先给思路再给代码&lt;/strong&gt;，并要求可运行的完整示例&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;数据分析&lt;/td&gt;
+ &lt;td&gt;让 AI 直接“分析一下”，得到一堆无法验证的结论&lt;/td&gt;
+ &lt;td&gt;先把数据整理成表格给它；要求&lt;strong&gt;每个结论都能对应到具体数据行&lt;/strong&gt;；涉及计算的部分让它给出计算过程&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;检索 / 查证&lt;/td&gt;
+ &lt;td&gt;拿到过时或来源不明的内容当成事实&lt;/td&gt;
+ &lt;td&gt;要求&lt;strong&gt;联网 + 指定权威来源 + 交叉核对 + 标注时间&lt;/strong&gt;（第二期技法 3 的组合拳）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;图像生成&lt;/td&gt;
+ &lt;td&gt;一次改一堆描述，改到最后不知道是哪句生效&lt;/td&gt;
+ &lt;td&gt;六要素拆分（主体 / 动作 / 环境 / 风格 / 镜头 / 画幅），&lt;strong&gt;一次只改一个要素&lt;/strong&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;会议纪要 / 长文整理&lt;/td&gt;
+ &lt;td&gt;直接丢录音稿，重点全丢&lt;/td&gt;
+ &lt;td&gt;分两步：先让它&lt;strong&gt;只输出议题与结论&lt;/strong&gt;；再把结论当作材料，生成带责任人和截止时间的任务列表&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Agent / 自动化&lt;/td&gt;
+ &lt;td&gt;只给目标不给边界，它擅自改动系统&lt;/td&gt;
+ &lt;td&gt;写清四问（目标 / 验收 / 边界 / 停止条件），先在小范围试跑&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="34-一个完整的实战案例让-ai-分析销售数据"&gt;3.4 一个完整的实战案例：让 AI 分析销售数据
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;【通用范例】&lt;/strong&gt; 下面这个案例把本章的三样东西串了起来：五类工具的写法差异、五步流程、以及避坑指南。你可以把它当成一个“模板”。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;任务背景&lt;/strong&gt;：我手上有一份 12 个月的销售明细表，想知道“&lt;strong&gt;哪几个品类在走下坡路&lt;/strong&gt;”，并据此安排下一季度的资源。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第一版（翻车）&lt;/strong&gt;：直接问——&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;帮我分析一下这份数据，看看有什么问题。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;结果：满篇“建议加强营销、重视客户体验、关注市场变化”的套话；更糟的是，它&lt;strong&gt;顺手编了三个数字&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第二版（对话式大模型的正确写法）&lt;/strong&gt;：先把数据整理成表格贴进去，再明确要求——&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;以下是我整理的销售明细（按品类 / 月份）。请只基于这份数据回答：每个结论必须标注对应的时间段和具体数字，&lt;strong&gt;没有数据支撑的结论一律不要输出&lt;/strong&gt;。格式：先给结论，再给数据依据。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;结果：结论变得可验证了，但它给的仍然只是“描述”（哪个品类掉了多少），不是“判断”。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第三版（补上判断标准）&lt;/strong&gt;：这是关键的一次升级——&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;在上面的基础上，请按以下口径重新判断：① 连续 3 个月环比下滑 → 标记为“下滑”；② 下滑幅度超过 20% → 标记为“严重下滑”。先列出满足条件的品类与具体数据，再对每个“严重下滑”品类给出 3 条可能原因，并注明“验证这个原因还需要哪些额外数据”。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;结果：终于拿到了能直接开会用的东西——有名单、有数据、有假设，还标明了待验证项。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第四版（如果换成 Agent 来做）&lt;/strong&gt;：给的不是步骤，而是“关键四问”——&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;目标&lt;/strong&gt;：产出一份《XX 品类下滑分析与建议》报告（含图表）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;验收标准&lt;/strong&gt;：每个结论都能追溯到原始表格中的具体行；报告中不允许出现原始数据里没有的数字。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;边界&lt;/strong&gt;：&lt;strong&gt;只能读取我提供的这份表格&lt;/strong&gt;，不允许联网、不允许调用其他数据源；不得修改或删除任何原始文件。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;停止条件&lt;/strong&gt;：如果发现数据缺失或口径冲突，停下来问我，不要自己假设。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;一句话总结&lt;/strong&gt;：同一个需求，写法升级一次，产出就上一个台阶。而拉开差距的往往不是“文笔”，是&lt;strong&gt;你有没有给出判断标准、有没有划清边界&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="四写在最后"&gt;四、写在最后
+&lt;/h2&gt;&lt;p&gt;这是这期的总结：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;技巧层面&lt;/strong&gt;：好用的提示词都能被拆成结构。别抄结论，抄&lt;strong&gt;结构&lt;/strong&gt;——五格拆解法（原文 / 场景 / 逻辑 / 效果 / 可迁移）本身就是一个可以一直用的工具。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;工具层面&lt;/strong&gt;：先定位痛点（复用？评测？观测？约束？优化？），再选工具。&lt;strong&gt;别为了用工具而用工具&lt;/strong&gt;，很多人只用“好用的提示词 + 一份迭代记录表”，就已经比大多数人高效了。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;进阶层面&lt;/strong&gt;：不同类型的 AI 工具要吃不同的写法。通用大模型给目标与边界，推理模型给判断标准，垂直工具给领域结构化输入，办公工具改材料而非指令，Agent 给目标 + 验收 + 边界 + 停止条件。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如果你觉得这期有用，欢迎转发给需要的朋友。&lt;/p&gt;
+&lt;h3 id="参考资料"&gt;参考资料
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Fabric：https://github.com/danielmiessler/fabric&lt;/li&gt;
+&lt;li&gt;promptfoo：https://github.com/promptfoo/promptfoo ｜ 官方博客《Promptfoo is joining OpenAI》：https://www.promptfoo.dev/blog/promptfoo-joining-openai/&lt;/li&gt;
+&lt;li&gt;OpenAI 官方公告《OpenAI to acquire Promptfoo》：https://openai.com/index/openai-to-acquire-promptfoo/&lt;/li&gt;
+&lt;li&gt;Langfuse：https://github.com/langfuse/langfuse&lt;/li&gt;
+&lt;li&gt;Agenta：https://github.com/Agenta-AI/agenta&lt;/li&gt;
+&lt;li&gt;DeepEval：https://github.com/confident-ai/deepeval&lt;/li&gt;
+&lt;li&gt;Guidance：https://github.com/guidance-ai/guidance&lt;/li&gt;
+&lt;li&gt;DSPy：https://github.com/stanfordnlp/dspy&lt;/li&gt;
+&lt;li&gt;OpenLIT：https://github.com/openlit/openlit&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;本文中的星标数、版本号与最近提交时间&lt;strong&gt;查询于 2026-10-03&lt;/strong&gt;，仅代表查询时的状态。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;</description></item><item><title>eNSP「错误代码 40」问题全解析：从入门排查到疑难根治</title><link>https://neutrino843.github.io/post/ensp-error-code-40/</link><pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate><guid>https://neutrino843.github.io/post/ensp-error-code-40/</guid><description>&lt;h2 id="一开篇引言"&gt;一、开篇引言
 &lt;/h2&gt;&lt;p&gt;eNSP（Enterprise Network Simulation Platform，华为企业网络仿真平台）是学习华为路由交换、备考 HCIA/HCIP 的必备工具。它能在电脑上&amp;quot;虚拟&amp;quot;出一台台路由器、交换机，让你不用花几千块买真机就能敲命令、组拓扑、做实验。&lt;/p&gt;
 &lt;p&gt;但很多人在双击设备图标、准备启动路由器的那一刻，会突然弹出一个让人崩溃的窗口：&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;错误代码：40　启动设备失败&lt;/strong&gt;&lt;/p&gt;
