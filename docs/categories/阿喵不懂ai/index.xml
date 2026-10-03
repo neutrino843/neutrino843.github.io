@@ -64,8 +64,8 @@
 &lt;/table&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;这五格不只是一张分析表，它同时是一个“填空模板”：以后看到好用的提示词，照着这五格记一遍；自己写新提示词时，也可以拿它自检。&lt;/p&gt;
-&lt;p&gt;可迁移技巧积累多了，你写提示词时会觉得“如有神助”——这确实和语文写作异曲同工：多积累、多学习、多总结，最后抽象成自己的一套打法。&lt;/p&gt;
+ &lt;p&gt;这五格不只是一张分析表，它同时是一个填空模板：以后看到好用的提示词，照着这五格记一遍；自己写新提示词时，也可以拿它自检。&lt;/p&gt;
+&lt;p&gt;可迁移技巧积累多了，你写提示词时会觉得如有神助——这确实和语文写作异曲同工：多积累、多学习、多总结，最后抽象成自己的一套打法。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 
@@ -100,14 +100,14 @@
 &lt;p&gt;不要凭主观臆想随意编造内容，每个分数请给出依据；最后输出一张汇总对比表，并给出建议优先级。&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;② 适用场景&lt;/strong&gt;：任何“要判断、要比较、要选一个”的任务——选型、评审、选 offer、挑方案、评估创意。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;② 适用场景&lt;/strong&gt;：任何&lt;strong&gt;要判断、要比较、要选一个&lt;/strong&gt;的任务——选型、评审、选 offer、挑方案、评估创意。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;③ 设计逻辑&lt;/strong&gt;：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;客观分析&lt;/code&gt; + &lt;code&gt;不要凭主观臆想编造内容&lt;/code&gt; → 对抗 AI 的&lt;strong&gt;谄媚倾向&lt;/strong&gt;（第二期讲过的“先接住情绪再给方案”）；&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;评分标准 + 权重&lt;/code&gt; → 把“我觉得哪个好”这种主观题，翻译成“五个可打分的维度”，AI 没法再用“三个都很有想法”来糊弄你；&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;每个分数给出依据&lt;/code&gt; + &lt;code&gt;输出对比表&lt;/code&gt; → &lt;strong&gt;S（Specification）&lt;/strong&gt;：规定了输出的形态与可核查性。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;关键是给标准，而不是给要求。&lt;/strong&gt; “帮我客观一点”是要求，AI 无法执行——它并不清楚你的“客观”是什么标准；“按这五个维度打分”是标准，AI 可以直接执行。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键是给标准，而不是给要求。&lt;/strong&gt; “帮我客观一点”是要求，AI 无法执行——它并不清楚你的客观是什么标准；“按这五个维度打分”是标准，AI 可以直接执行。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：直接问“你觉得我这三个创意怎么样”，AI 会先夸一番，再给一堆万金油建议；给了评分卡之后，输出变成了可比较、有依据、能拿去开会讨论的东西。&lt;strong&gt;同一句话，加了一张评分表，结论的可用性完全不同。&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;当你需要判断而不是内容时，先把你的判断标准写出来。&lt;/strong&gt; 你写不出标准，说明这件事你自己也还没想清楚——这本身就是有价值的信号。这时候你可以去查一查行业标准，或者让 AI 帮你列出几份候选标准；不管最后用不用得上，&lt;strong&gt;你在找标准的过程，本身就是学习&lt;/strong&gt;。&lt;/p&gt;
 &lt;h3 id="14-示例-3项目推进系列同一件事我写了-4-版"&gt;1.4 示例 3｜项目推进系列：同一件事，我写了 4 版
@@ -148,20 +148,20 @@
 &lt;li&gt;&lt;code&gt;必须遵循一致的技术标准 / 质量规范 / 开发流程 / 验收准则&lt;/code&gt; → &lt;strong&gt;S（Specification）&lt;/strong&gt;：把我脑子里的“工程规范”显性写出来，否则 AI 只会按最省事的方式做；&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;生成报告 / 审计 / 进度跟踪&lt;/code&gt; → &lt;strong&gt;I 的追加要求&lt;/strong&gt;：不只做事，还要&lt;strong&gt;留下可检查的痕迹&lt;/strong&gt;（报告、清单、节点状态）。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;关键杠杆是“把隐性要求显性化”。&lt;/strong&gt; 一致性、可维护性、技术债务这些词，平时很少有人会写进提示词里——但只要写上去，AI 的行为就会明显收敛。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键杠杆是把隐性要求显性化。&lt;/strong&gt; 一致性、可维护性、技术债务这些词，平时很少有人会写进提示词里——但只要写上去，AI 的行为就会明显收敛。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;好的一面：在多轮、长周期的任务里，这一组提示词能有效防住AI 越做越飘——它不会在第三阶段突然换掉第一阶段的写法；&lt;/li&gt;
 &lt;li&gt;翻车的一面：&lt;strong&gt;4 条都在 100 字以上，且大量使用“全面”“系统性”“必须严格”这类无法验收的副词。&lt;/strong&gt; 当任务本身很小（比如只改一个函数）时，这一长串要求会稀释真正的指令，AI 反而抓不住重点。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;先写一个“长版”，把自己的所有要求倒出来；再压成一个“短版”，只留能验收的硬指标。&lt;/strong&gt; 上面版本 1 可以压缩成这样：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;先写一个长版，把自己的所有要求倒出来；再压成一个短版，只留能验收的硬指标。&lt;/strong&gt; 上面版本 1 可以压缩成这样：&lt;/p&gt;
 
  &lt;blockquote&gt;
  &lt;p&gt;继续推进下一阶段。硬性要求：① 沿用已定技术栈与代码风格，不引入新依赖；② 完成后输出一份改动清单（改了什么、为什么、影响范围）；③ 遇到底层设计变更，先停下来问我。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;p&gt;从 120 字压到 60 字，信息量没少，AI 反而更容易执行——&lt;strong&gt;提示词的长度应该由“信息量”决定，而不是由“语气强度”决定。&lt;/strong&gt;&lt;/p&gt;
-&lt;h3 id="15-示例-4会议纪要两步法把一步到位拆成两次对话"&gt;1.5 示例 4｜会议纪要两步法：把“一步到位”拆成两次对话
+&lt;h3 id="15-示例-4会议纪要两步法把一步到位拆成两次对话"&gt;1.5 示例 4｜会议纪要两步法：把一步到位拆成两次对话
 &lt;/h3&gt;
  &lt;blockquote&gt;
  &lt;p&gt;&lt;strong&gt;【通用范例】&lt;/strong&gt; 这一条和前面几条都不同——它演示的是“&lt;strong&gt;把一个大任务拆成两次对话&lt;/strong&gt;”，也是我最推荐职场新人先掌握的一条。&lt;/p&gt;
@@ -538,7 +538,7 @@
  &lt;/blockquote&gt;
 &lt;details&gt;
 &lt;summary&gt;术语卡片：LLM-as-judge（用模型当裁判）&lt;/summary&gt;
-&lt;p&gt;&lt;strong&gt;LLM-as-judge&lt;/strong&gt;：让一个（通常更强的）模型按照给定的评分标准，去给另一个模型的输出打分。它是目前规模化评估“主观质量”（是否有帮助、语气是否合适、是否忠于原文）最现实的手段。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;LLM-as-judge&lt;/strong&gt;：让一个（通常更强的）模型按照给定的评分标准，去给另一个模型的输出打分。它是目前规模化评估主观质量（是否有帮助、语气是否合适、是否忠于原文）最现实的手段。&lt;/p&gt;
 
  &lt;blockquote&gt;
  &lt;p&gt;但它有两个坑：一是&lt;strong&gt;裁判本身有偏见&lt;/strong&gt;（例如偏好更长的回答、偏好和自己风格接近的回答）；二是&lt;strong&gt;裁判会漂移&lt;/strong&gt;（换了模型版本，分数就不可比了）。所以专业做法是：固定裁判模型版本 + 抽样人工作为校准基准。&lt;/p&gt;
@@ -550,7 +550,7 @@
 &lt;p&gt;&lt;strong&gt;红队测试&lt;/strong&gt;：用对抗性的输入，主动攻击自己的 AI 应用，在真实攻击者之前把漏洞找出来。常见手法包括提示词注入、越狱（jailbreak）、诱导泄露隐私数据、诱导调用不该调用的工具等。&lt;/p&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;它和“评测”的区别在于：评测回答的是“&lt;strong&gt;它做得好不好&lt;/strong&gt;”，红队回答的是“&lt;strong&gt;它会不会被人搞坏&lt;/strong&gt;”。对要上线的 Agent 类应用来说，这两件事都得做——尤其是接入了文件、数据库或支付能力的 Agent。&lt;/p&gt;
+ &lt;p&gt;它和评测的区别在于：评测回答的是“&lt;strong&gt;它做得好不好&lt;/strong&gt;”，红队回答的是“&lt;strong&gt;它会不会被人搞坏&lt;/strong&gt;”。对要上线的 Agent 类应用来说，这两件事都得做——尤其是接入了文件、数据库或支付能力的 Agent。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;/details&gt;
@@ -702,6 +702,42 @@
 &lt;li&gt;&lt;strong&gt;连续两次同类错误&lt;/strong&gt; → 说明这个任务不适合纯对话完成，考虑换工具类型（比如改成 Agent，或改用能保证格式的约束生成方案）。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;details&gt;
+&lt;summary&gt;可复用：提示词迭代记录表（建议收藏）&lt;/summary&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;版本&lt;/th&gt;
+ &lt;th&gt;我改了什么&lt;/th&gt;
+ &lt;th&gt;结果变化&lt;/th&gt;
+ &lt;th&gt;保留 / 舍弃&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;v1&lt;/td&gt;
+ &lt;td&gt;只写了一句需求&lt;/td&gt;
+ &lt;td&gt;输出笼统，还编了数据&lt;/td&gt;
+ &lt;td&gt;舍弃&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;v2&lt;/td&gt;
+ &lt;td&gt;补上材料 + “没有依据的结论不要输出”&lt;/td&gt;
+ &lt;td&gt;结论变得可验证&lt;/td&gt;
+ &lt;td&gt;保留&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;v3&lt;/td&gt;
+ &lt;td&gt;补上判断标准（连续 3 个月环比下滑 = 下滑）&lt;/td&gt;
+ &lt;td&gt;拿到能直接开会的结论&lt;/td&gt;
+ &lt;td&gt;保留&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;记录表的意义不是“留档”，而是&lt;strong&gt;让你看清自己每一版为什么变好&lt;/strong&gt;。改提示词时如果只凭感觉，你永远不知道自己赢在哪、输在哪；把有效的改法记下来，好用的写法才会真正变成你的资产。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;/details&gt;
 &lt;h3 id="33-分场景避坑指南"&gt;3.3 分场景避坑指南
 &lt;/h3&gt;&lt;table&gt;
