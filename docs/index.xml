@@ -20,7 +20,7 @@
 &lt;p&gt;如果你是那种AI 用得还行，但时好时坏、说不清为什么的人，这一期应该是蛮有用的一期，依旧适合小白阅读（因为我也是小白QAQ）&lt;/p&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;补充一句：这一期不聊工具。如果你关心的是“有没有现成的开源工具能帮我管提示词、测提示词”，那部分我拆到&lt;strong&gt;第四期&lt;/strong&gt;单独讲。&lt;/p&gt;
+ &lt;p&gt;补充一句：这一期不聊工具。如果你关心的是有没有现成的开源工具能帮我管提示词、测提示词，那部分我到&lt;strong&gt;第四期&lt;/strong&gt;单独讲几个我觉得好用的工具。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;hr&gt;
@@ -73,7 +73,7 @@
  &lt;/blockquote&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;说明：下面 5 组提示词里，&lt;strong&gt;1.2 / 1.3 / 1.4&lt;/strong&gt; 取自本系列前两期内容与我的实际使用记录；&lt;strong&gt;1.5 / 1.6&lt;/strong&gt; 是为了覆盖高频场景补充的通用范例，你可以直接替换成自己的语料。&lt;/p&gt;
+ &lt;p&gt;说明：下面 5 组提示词里，&lt;strong&gt;1.2 / 1.3 / 1.4&lt;/strong&gt; 取自本系列前两期内容与我的实际使用记录；&lt;strong&gt;1.5 / 1.6&lt;/strong&gt; 是为了覆盖高频场景补充的通用范例。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;h3 id="12-示例-1笔记驱动式让-ai-帮你把笔记组织成文"&gt;1.2 示例 1｜笔记驱动式：让 AI 帮你把笔记组织成文
@@ -88,11 +88,11 @@
 &lt;p&gt;&lt;strong&gt;③ 设计逻辑&lt;/strong&gt;：这条提示词几乎就是 CRISP 里的“C + I + S”三段。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;以下是我整理的笔记：……&lt;/code&gt; → &lt;strong&gt;C（Context）&lt;/strong&gt;：把材料前置，而不是让 AI 去猜；&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;帮我生成一篇博客提纲&lt;/code&gt; → &lt;strong&gt;I（Intent）&lt;/strong&gt;：明确要的是“提纲”，不是“成文”；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;帮我生成一篇博客提纲&lt;/code&gt; → &lt;strong&gt;I（Intent）&lt;/strong&gt;：明确要的是提纲，不是成文；&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;受众是完全没有 AI 基础的读者&lt;/code&gt; + &lt;code&gt;突出我的踩坑经历&lt;/code&gt; → &lt;strong&gt;S（Specification）&lt;/strong&gt;：划出了风格与内容边界。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;关键杠杆是 C 和 I 的拆分&lt;/strong&gt;：先要提纲、再要正文。很多人一上来就要“一篇完整文章”，结果结构不对就得整篇重写；先要提纲，返工成本几乎为零。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：反模式（直接说“帮我写一篇 AI Agent 入门的博客”）产出的是“大而全但没观点”的百科式文章；正模式产出的是“有个人视角、有踩坑细节”的文章。差别不在文笔，在&lt;strong&gt;素材是谁的&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键杠杆是 C 和 I 的拆分&lt;/strong&gt;：先要提纲、再要正文。很多人一上来就要一篇完整文章，结果结构不对就得整篇重写；先要提纲，返工成本几乎为零。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：反模式（直接说“帮我写一篇 AI Agent 入门的博客”）产出的是大而全但没观点的百科式文章；正模式产出的是有个人视角、有踩坑细节的文章。差别不在文笔，在&lt;strong&gt;素材是谁的&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;凡是“写”类任务，都先要结构、再要内容。&lt;/strong&gt; 就像写作文，我们也是先审题、再列提纲，确认提纲没问题了，才开始动笔。&lt;/p&gt;
 &lt;h3 id="13-示例-2评分卡式让-ai-给出能比较的客观结论"&gt;1.3 示例 2｜评分卡式：让 AI 给出能比较的客观结论
 &lt;/h3&gt;&lt;p&gt;&lt;strong&gt;① 提示词原文&lt;/strong&gt;&lt;/p&gt;
@@ -167,7 +167,7 @@
 &lt;h3 id="15-示例-4会议纪要两步法把一步到位拆成两次对话"&gt;1.5 示例 4｜会议纪要两步法：把一步到位拆成两次对话
 &lt;/h3&gt;
  &lt;blockquote&gt;
- &lt;p&gt;&lt;strong&gt;【通用范例】&lt;/strong&gt; 这一条和前面几条都不同——它演示的是“&lt;strong&gt;把一个大任务拆成两次对话&lt;/strong&gt;”，也是我最推荐职场新人先掌握的一条。&lt;/p&gt;
+ &lt;p&gt;&lt;strong&gt;【通用范例】&lt;/strong&gt; 这一条和前面几条都不同——它演示的是&lt;strong&gt;把一个大任务拆成两次对话&lt;/strong&gt;，也是我最推荐新手先掌握的一条。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;p&gt;&lt;strong&gt;① 提示词原文&lt;/strong&gt;&lt;/p&gt;
@@ -192,7 +192,7 @@
 &lt;li&gt;&lt;code&gt;没有明确的地方标注“待确认”，不要自己编&lt;/code&gt; → 直接对抗&lt;strong&gt;幻觉&lt;/strong&gt;。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：一步到位地问“帮我整理这份会议纪要并列出待办”，AI 会给你一份看起来很完整、但负责人和时间全是编出来的清单；拆成两步之后，你会先拿到一份正确的草稿，它想编也没有依据了。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;当任务同时包含理解和行动两个阶段时，把它们分成两次对话。&lt;/strong&gt; 让 AI 先做阅读理解，你确认无误后，再让它做“基于阅读结果的产出”。这样一出问题，你能立刻分清是它读错了还是它做错了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;当任务同时包含理解和行动两个阶段时，把它们分成两次对话。&lt;/strong&gt; 让 AI 先做阅读理解，你确认无误后，再让它做基于阅读结果的产出。这样一出问题，你能立刻分清是它读错了还是它做错了。同理，可以拓展成更多步骤，在一个对话下完成即可。&lt;/p&gt;
 &lt;h3 id="16-示例-5样例迁移式给一个例子胜过两百字描述"&gt;1.6 示例 5｜样例迁移式：给一个例子，胜过两百字描述
 &lt;/h3&gt;&lt;p&gt;&lt;strong&gt;① 提示词原文&lt;/strong&gt;&lt;/p&gt;
 
@@ -212,11 +212,11 @@
 &lt;li&gt;&lt;code&gt;不要直接套用旧文案里的句子，只模仿风格&lt;/code&gt; → &lt;strong&gt;S 里的负面约束&lt;/strong&gt;，防止它偷懒照抄。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;④ 实操效果&lt;/strong&gt;：改用样例之前，我描述风格的方式是“专业一点、亲切一点、有网感”——这三个词 AI 每次理解得都不一样；改用样例之后，同一个产品连着写 5 版，风格基本能保持一致。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;能用例子表达的，就不要用形容词。&lt;/strong&gt; “高级感”“有网感”“接地气”这些词，AI 和你的理解永远有偏差；但你随手甩一段“你觉得对味”的旧内容，偏差立刻就没了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;⑤ 可迁移技巧&lt;/strong&gt;：&lt;strong&gt;能用例子表达的，就不要用形容词。&lt;/strong&gt; “高级感”“有网感”“接地气”这些词，AI 和你的理解永远有偏差；但你随手甩一段你觉得对味的旧内容，偏差立刻就没了。&lt;/p&gt;
 &lt;h3 id="17-提炼从上面这些提示词里能复制的-8-个普适小技巧"&gt;1.7 提炼：从上面这些提示词里，能复制的 8 个普适小技巧
-&lt;/h3&gt;&lt;p&gt;把上面每条的“⑤ 可迁移技巧”收拢一下，得到这 8 条。它们不依赖具体任务，可以直接搬到你自己的场景里：&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;把上面每条的⑤ 可迁移技巧收拢一下，得到这 8 条。它们不依赖具体任务，可以直接搬到你自己的场景里：&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;把“形容词要求”换成“可验收的标准”。&lt;/strong&gt; “写得好一点”没法执行；“不超过 300 字、开头一句话给结论、禁止出现‘赋能’”可以执行。&lt;strong&gt;标准必须能被检查。&lt;/strong&gt; 写不出标准时，就去查行业标准，或者让 AI 帮你列几份候选——找标准的过程本身就是学习。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;把“形容词要求”换成“可验收的标准”。&lt;/strong&gt; 写得好一点没法执行；“不超过 300 字、开头一句话给结论、禁止出现‘赋能’”可以执行。&lt;strong&gt;标准必须能被检查。&lt;/strong&gt; 写不出标准时，就去查行业标准，或者让 AI 帮你列几份候选——找标准的过程本身就是学习。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;给样例，胜过给形容词。&lt;/strong&gt; 一段你满意的旧内容，比两百字风格描述管用（对应 CRISP 的 P）。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;用“约束式反馈”代替“批评式反馈”。&lt;/strong&gt; 不说“太笼统了”，说“把第二段扩到 200 字，补一个具体客户案例和数据”。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;材料前置，不要补在后面。&lt;/strong&gt; 把笔记、文档、数据放在任务描述之前，AI 的注意力分配更合理。&lt;/li&gt;
@@ -227,7 +227,7 @@
 &lt;/ol&gt;
 &lt;hr&gt;
 &lt;h2 id="二进阶用法不同类型的-ai-工具提示词该怎么写"&gt;二、进阶用法：不同类型的 AI 工具，提示词该怎么写
-&lt;/h2&gt;&lt;p&gt;到这里，我们已经知道怎么把提示词写好了。但还有一层常被忽略的差别：&lt;strong&gt;你面对的不是“一个 AI”，而是好几类完全不同的 AI 工具&lt;/strong&gt;。同一套提示词换个工具就失效，往往不是模型变笨了，而是&lt;strong&gt;你还在用 A 类工具的写法去指挥 B 类工具&lt;/strong&gt;。&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;到这里，我们已经知道怎么把提示词写好了。但还有一层常被忽略的差别：&lt;strong&gt;你面对的不是一个 AI，而是好几类完全不同的 AI 工具&lt;/strong&gt;。同一套提示词换个工具就失效，往往不是模型变笨了，而是&lt;strong&gt;你还在用 A 类工具的写法去指挥 B 类工具&lt;/strong&gt;。&lt;/p&gt;
 &lt;h3 id="21-五类-ai-工具的设计逻辑差异"&gt;2.1 五类 AI 工具的设计逻辑差异
 &lt;/h3&gt;&lt;details&gt;
 &lt;summary&gt;&lt;strong&gt;类型一：通用大模型（对话式）&lt;/strong&gt;——最常见，也最容易写过头&lt;/summary&gt;
@@ -247,7 +247,7 @@
 &lt;details&gt;
 &lt;summary&gt;&lt;strong&gt;类型二：推理型 / 深度思考模型&lt;/strong&gt;——少指挥，多给标准&lt;/summary&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：内置“先想后答”，会自己搭推理步骤。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：内置先想后答，会自己搭推理步骤。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;设计逻辑&lt;/strong&gt;：&lt;strong&gt;给判断标准，不要给思考步骤。&lt;/strong&gt; 它已经有思维链了，你再写“请一步步思考”，属于第二期说的“补能力”——补了反而画蛇添足。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;真正有效的做法&lt;/strong&gt;：
 &lt;ul&gt;
@@ -274,7 +274,7 @@
 &lt;/ul&gt;
 &lt;/details&gt;
 &lt;details&gt;
-&lt;summary&gt;&lt;strong&gt;类型四：AI 办公工具 / 产品内嵌 AI&lt;/strong&gt;——改“输入”，别改“指令”&lt;/summary&gt;
+&lt;summary&gt;&lt;strong&gt;类型四：AI 办公工具 / 产品内嵌 AI&lt;/strong&gt;——改输入，别改指令&lt;/summary&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：提示词被产品包装过，你可调的空间很小（通常就是一个输入框或几个按钮）。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;设计逻辑&lt;/strong&gt;：&lt;strong&gt;既然指令改不动，那就把力气花在“喂什么材料”上。&lt;/strong&gt; 同一句“帮我总结这份会议纪要”，喂进去的是原始录音转写稿（含废话、含口语），还是你筛过一遍的要点，结果差距巨大。&lt;/li&gt;
@@ -301,11 +301,11 @@
 &lt;li&gt;&lt;strong&gt;停止条件&lt;/strong&gt;：什么情况下应当停下来问你，而不是自己硬试&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;常见错误&lt;/strong&gt;：只给目标不给边界，于是它“为了完成任务”擅自删文件、改配置、乱调接口。&lt;strong&gt;Agent 的破坏力来自它的执行力，所以边界比目标更重要。&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;常见错误&lt;/strong&gt;：只给目标不给边界，于是它为了完成任务擅自删文件、改配置、乱调接口。&lt;strong&gt;Agent 的破坏力来自它的执行力，所以边界比目标更重要。&lt;/strong&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/details&gt;
 &lt;h3 id="22-从需求拆解到-prompt-落地的五步流程"&gt;2.2 从需求拆解到 prompt 落地的五步流程
-&lt;/h3&gt;&lt;p&gt;上面是“面对不同工具怎么写”，这一段是“拿到一个任务，怎么一步步变成能用的 prompt”。这套流程对五类工具都适用。&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;上面是面对不同工具怎么写，这一段是拿到一个任务，怎么一步步变成能用的 prompt。这套流程对五类工具都适用。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Step 1｜先定义终产物，而不是先想提示词&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;问自己一句：&lt;strong&gt;任务完成后，交付物长什么样？&lt;/strong&gt; 是一份文档、一张表、一段代码、一个结论，还是“帮我做完一件事”？&lt;/p&gt;
 
@@ -317,7 +317,7 @@
 &lt;p&gt;把任务拆成步骤，然后逐步标注：&lt;strong&gt;哪些交给 AI、哪些你自己做、哪一步最容易出错。&lt;/strong&gt;&lt;/p&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;经验判断：&lt;strong&gt;越靠近“判断”和“担责”的环节，越要留给人&lt;/strong&gt;；越靠近“收集”和“整理”的环节，越适合交给 AI。这一步也顺带决定了你要不要用 Agent（多步自动执行），还是普通对话就够了。&lt;/p&gt;
+ &lt;p&gt;经验判断：&lt;strong&gt;越靠近判断和担责的环节，越要留给人&lt;/strong&gt;；越靠近收集和整理的环节，越适合交给 AI。这一步也顺带决定了你要不要用 Agent（多步自动执行），还是普通对话就够了。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;p&gt;&lt;strong&gt;Step 3｜补齐材料与边界&lt;/strong&gt;&lt;/p&gt;
@@ -342,7 +342,7 @@
  &lt;p&gt;五要素不必全写，但 &lt;strong&gt;I 必须有&lt;/strong&gt;。如果只能写一句，就把那一句说到极致清楚。&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Step 5｜迭代：从“看结果”改成“看理解”&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step 5｜迭代：从看结果改成看理解&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;大多数人对结果的返工方式是“不对，重写”，效率很低。更好的迭代顺序是：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;先看它有没有理解错&lt;/strong&gt;（要求它复述理解，或直接看深度思考过程）；&lt;/li&gt;
